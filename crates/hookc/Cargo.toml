@@ -1,0 +1,19 @@
+[package]
+name = "cvb-hookc"
+description = "Cliente de hook do cli-voice-bridge: repassa o payload ao daemon e sai"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "cvb-hook"
+path = "src/main.rs"
+
+# Caminho quente (ADR-0001): dependência nova aqui precisa de justificativa.
+# Repare que não há `clap` — o custo de arranque dele não se paga por um
+# programa que lê três argumentos posicionais.
+[dependencies]
+cvb-core.workspace = true
+serde_json.workspace = true

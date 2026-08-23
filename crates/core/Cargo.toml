@@ -1,0 +1,12 @@
+[package]
+name = "cvb-core"
+description = "Esquema canônico de momentos, protocolo de IPC e caminhos de plataforma do cli-voice-bridge"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true

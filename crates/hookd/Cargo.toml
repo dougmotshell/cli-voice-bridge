@@ -1,0 +1,16 @@
+[package]
+name = "cvb-hookd"
+description = "Daemon do cli-voice-bridge: normaliza, decide, enfileira, fala e escuta"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "cvb-hookd"
+path = "src/main.rs"
+
+[dependencies]
+cvb-core.workspace = true
+serde_json.workspace = true

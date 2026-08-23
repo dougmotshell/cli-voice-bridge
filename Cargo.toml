@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/core",
+    "crates/hookc",
+    "crates/hookd",
+    "crates/cvb",
+    "crates/ptywrap",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+publish = false
+
+[workspace.dependencies]
+cvb-core = { path = "crates/core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+clap = { version = "4", features = ["derive"] }
+
+# O perfil de release importa aqui: o `hookc` roda em série com o agente de IA,
+# centenas de vezes por sessão (ADR-0001). Binário menor abre mais rápido.
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
