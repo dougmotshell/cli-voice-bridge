@@ -7,11 +7,13 @@
 //! sempre `adapters → core`, nunca o contrário — é o que permite acrescentar um
 //! quarto CLI sem tocar aqui. Ver ADR-0007.
 
+pub mod audio;
 pub mod caminhos;
 pub mod config;
 pub mod ipc;
 pub mod momento;
 pub mod protocolo;
+pub mod sidecar;
 
 pub use config::Config;
 pub use momento::{Evento, Momento, Origem, Transporte, Urgencia};

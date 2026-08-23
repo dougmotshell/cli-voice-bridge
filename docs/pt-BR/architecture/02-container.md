@@ -75,13 +75,18 @@ Estado por contêiner:
 
 | Contêiner | Estado |
 |---|---|
-| `core` | esqueleto útil: momentos, protocolo, IPC (só UNIX), caminhos |
+| `core` | momentos, protocolo, IPC (só UNIX), caminhos, configuração, reprodução de áudio, cliente do sidecar |
 | `hookc` | funcional: lê payload, faz handshake, despeja e sai |
-| `hookd` | escuta e normaliza; sem política, fila, fala nem escuta |
-| `cvb` | `doctor`, `daemon status`, `mute`/`unmute` de pé; o resto sai com erro explícito |
+| `hookd` | escuta, normaliza, aplica a política e **fala**; sem fila de prioridade nem escuta |
+| `cvb` | `doctor`, `daemon status`, `say`, `voices`, `mute`/`unmute` de pé; o resto sai com erro explícito |
 | `ptywrap` | declarado, sai com erro dizendo que não foi implementado |
 | GUI | não criada — ver `gui/README.md` |
-| `sidecar` | laço e protocolo escritos; síntese não exercitada |
+| `sidecar` | laço e protocolo escritos; a síntese com XTTS de verdade ainda não foi exercitada |
+
+**Por que `audio` e `sidecar` moram no `core` e não no `hookd`.** O `cvb doctor`
+precisa checar reprodutor e sidecar **sem** o daemon de pé. A fronteira que
+resultou é útil: `core` guarda mecanismo compartilhado, `hookd` guarda política
+(`redact`, `template`, quando falar).
 
 ## Ciclo de vida
 

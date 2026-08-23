@@ -54,10 +54,12 @@ graph TB
 | `adapters::*` | Translate each CLI's dialect. One module per CLI | [event-normalization](../specs/event-normalization.md) |
 | `core::normalize` | Canonical moment and deduplication across transports | [event-normalization](../specs/event-normalization.md) |
 | `policy` | Decide whether to speak, and how urgently, given presence and profile | [speech-output](../specs/speech-output.md) |
-| `redact` | Strip secrets before anything else | [speech-output](../specs/speech-output.md) |
-| `template` / `summarize` | Turn a moment into a short phrase | [speech-output](../specs/speech-output.md) |
-| `speech::queue` | Priority, collapsing of repeats, cutting, expiry | [speech-output](../specs/speech-output.md) |
-| `speech::tts` | Sidecar, cache of fixed phrases, fallback to the OS voice | [speech-output](../specs/speech-output.md) |
+| `speech::redact` | Strip secrets before anything else | [speech-output](../specs/speech-output.md) |
+| `speech::template` | Turn a moment into a short pt-BR phrase | [speech-output](../specs/speech-output.md) |
+| `speech::Voz` | Orchestrates redact → synthesize → play, with cache and degradation | [speech-output](../specs/speech-output.md) |
+| `core::sidecar` | Client of the synthesis sidecar | [speech-output](../specs/speech-output.md) |
+| `core::audio` | Playback through a system program, and the emergency voice | [ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md) |
+| `speech::queue` | Priority, collapsing of repeats, cutting, expiry — **does not exist yet** | [speech-output](../specs/speech-output.md) |
 | `listen::*` | Shortcut, capture, VAD, transcription, resolution | [speech-input](../specs/speech-input.md) |
 | `reply` | Deliver the answer through the right path for each CLI | [speech-input](../specs/speech-input.md) |
 | `core::config` | Configuration layers and hot reload | [configuration](../specs/configuration.md) |
@@ -71,6 +73,14 @@ lets a fourth CLI be added without touching the core
 
 `redact` runs **before** `template` and before any logging. A secret must not
 reach the template or the disk.
+
+`core::audio` and `core::sidecar` sit in the core, not in `hookd`, because
+`cvb doctor` has to check them with no daemon running. The rule that emerged:
+**`core` is mechanism, `hookd` is policy.**
+
+Today `Voz::falar` is synchronous and serialized behind a mutex — with no queue,
+two threads speaking at once would produce overlapping audio. The queue with
+priority, collapsing, and cutting is still to be built.
 
 ## Level 4 (code)
 

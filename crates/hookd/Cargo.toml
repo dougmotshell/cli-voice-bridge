@@ -13,4 +13,5 @@ path = "src/main.rs"
 
 [dependencies]
 cvb-core.workspace = true
+serde.workspace = true
 serde_json.workspace = true

@@ -9,14 +9,17 @@
 
 mod adapters;
 mod normalize;
+mod speech;
 mod state;
 
 use std::io::BufRead;
 use std::sync::{Arc, Mutex};
 
+use cvb_core::config::{Config, QuandoFalar};
 use cvb_core::ipc::{self, Conexao};
-use cvb_core::{caminhos, Requisicao, Resposta, VERSAO_PROTOCOLO};
+use cvb_core::{caminhos, Evento, Requisicao, Resposta, VERSAO_PROTOCOLO};
 
+use speech::Voz;
 use state::Estado;
 
 fn main() -> std::process::ExitCode {
@@ -33,7 +36,37 @@ fn main() -> std::process::ExitCode {
         }
     };
 
+    let config = match Config::carregar() {
+        Ok(c) => c,
+        Err(e) => {
+            // Configuração inválida é erro: seguir com os padrões faria a pessoa
+            // achar que o que ela escreveu está valendo.
+            eprintln!("cvb-hookd: configuração inválida — {e}");
+            return std::process::ExitCode::from(2);
+        }
+    };
+    let voz = Arc::new(Voz::nova(&config));
+    let config = Arc::new(config);
+
     println!("cvb-hookd: escutando em {}", endereco.display());
+    if voz.sidecar().vivo() {
+        println!(
+            "cvb-hookd: sidecar de síntese de pé em {}",
+            voz.sidecar().endereco().display()
+        );
+    } else {
+        eprintln!(
+            "cvb-hookd: sidecar fora do ar em {} — vou falar com a voz do sistema",
+            voz.sidecar().endereco().display()
+        );
+    }
+    match voz.reprodutor() {
+        Some(r) => println!("cvb-hookd: reprodutor de áudio: {}", r.nome()),
+        None => eprintln!(
+            "cvb-hookd: nenhum reprodutor de áudio (procurei por {}) — só a voz do sistema",
+            cvb_core::audio::Reprodutor::candidatos().join(", ")
+        ),
+    }
     // TODO: morrer por sinal (SIGTERM, SIGINT) não roda o `Drop` do `Ouvinte`,
     // então o socket fica no disco. Não é grave — `Ouvinte::abrir` detecta o
     // órfão e o remove —, mas um manipulador de sinal deixaria mais limpo.
@@ -43,17 +76,19 @@ fn main() -> std::process::ExitCode {
         match ouvinte.aceitar() {
             Ok(conexao) => {
                 let estado = Arc::clone(&estado);
+                let voz = Arc::clone(&voz);
+                let config = Arc::clone(&config);
                 // Uma thread por conexão. São poucas e de vida curta; um runtime
                 // assíncrono não se paga aqui, e são menos dependências no
                 // caminho que precisa ser confiável.
-                std::thread::spawn(move || atender(conexao, estado));
+                std::thread::spawn(move || atender(conexao, estado, voz, config));
             }
             Err(e) => eprintln!("cvb-hookd: conexão recusada: {e}"),
         }
     }
 }
 
-fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>) {
+fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>, voz: Arc<Voz>, config: Arc<Config>) {
     let mut leitor = std::io::BufReader::new(conexao);
     let mut linha = String::new();
     let mut apresentado = false;
@@ -111,13 +146,11 @@ fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>) {
                 payload,
             } => {
                 let normalizado = normalize::normalizar(origem, transporte, &evento, &payload);
-                {
+                let silenciado = {
                     let mut e = estado.lock().expect("estado envenenado");
                     e.registrar(&normalizado);
-                }
-                // TODO: daqui em diante falta tudo — deduplicação entre
-                // transportes, política (`docs/pt-BR/specs/speech-output.md`),
-                // redação, fila e síntese. Por ora só se vê o momento.
+                    e.silenciado()
+                };
                 println!(
                     "{} [{}/{}] {}",
                     normalizado.momento,
@@ -127,6 +160,14 @@ fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>) {
                         .trim_matches('"'),
                     normalizado.texto
                 );
+                // Falar bloqueia até o áudio acabar. Numa thread própria, para
+                // que o `hookc` do outro lado não espere por isso — ele roda em
+                // série com o agente de IA (ADR-0001).
+                if !silenciado {
+                    let voz = Arc::clone(&voz);
+                    let config = Arc::clone(&config);
+                    std::thread::spawn(move || anunciar(&normalizado, &voz, &config));
+                }
             }
 
             Requisicao::Status => {
@@ -154,10 +195,25 @@ fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>) {
             }
 
             Requisicao::Falar { texto } => {
-                // TODO: ponte com o sidecar do voice-clone (ADR-0003).
-                eprintln!("cvb-hookd: TODO falar: {texto}");
-                let r = Resposta::Erro {
-                    mensagem: "síntese ainda não implementada — ver ADR-0003".into(),
+                let saida = voz.falar(&texto);
+                let r = if saida.falou() {
+                    Resposta::Falado {
+                        como: saida.descricao(),
+                    }
+                } else {
+                    Resposta::Erro {
+                        mensagem: saida.descricao(),
+                    }
+                };
+                let _ = ipc::enviar_linha(leitor.get_mut(), &r);
+            }
+
+            Requisicao::Vozes => {
+                let r = match voz.sidecar().vozes() {
+                    Ok(vozes) => Resposta::Vozes { vozes },
+                    Err(e) => Resposta::Erro {
+                        mensagem: e.to_string(),
+                    },
                 };
                 let _ = ipc::enviar_linha(leitor.get_mut(), &r);
             }
@@ -171,5 +227,31 @@ fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>) {
                 let _ = ipc::enviar_linha(leitor.get_mut(), &r);
             }
         }
+    }
+}
+
+/// Decide se o momento vira fala e, se virar, fala.
+///
+/// A política mora em `docs/pt-BR/specs/speech-output.md`; aqui só se aplica.
+fn anunciar(evento: &Evento, voz: &Voz, config: &Config) {
+    if !config.cli_ativo(evento.origem) {
+        return;
+    }
+    match config.quando_falar(evento.momento) {
+        QuandoFalar::Nunca => return,
+        // TODO: `ausente` deveria falar só quando a pessoa não está olhando, e
+        // ainda não há detecção de foco nos três sistemas. Até haver, o padrão
+        // documentado é assumir presente e falar menos — silêncio incomoda menos
+        // que ruído, e a GUI ainda mostra o momento.
+        QuandoFalar::Ausente => return,
+        QuandoFalar::Sempre => {}
+    }
+
+    let Some(frase) = speech::template::frase(evento, config) else {
+        return;
+    };
+    let saida = voz.falar(&frase);
+    if !saida.falou() {
+        eprintln!("cvb-hookd: não falei \"{frase}\" — {}", saida.descricao());
     }
 }

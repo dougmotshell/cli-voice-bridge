@@ -21,6 +21,7 @@ never reused.
 | [0006](0006-stt-offline-na-maquina.md) | Speech recognition offline, on the machine | accepted in principle; engine open |
 | [0007](0007-esquema-canonico-de-momentos.md) | A canonical schema of "moments" | accepted |
 | [0008](0008-ipc-por-socket-local.md) | IPC over a local socket, never a TCP port | accepted |
+| [0009](0009-reproducao-por-reprodutor-do-sistema.md) | Play audio through the system player, not through a library | accepted |
 
 TODO: decisions not yet taken, which become ADRs once measured — the STT engine
 (closes 0006), the summarizer for long messages, the GUI front-end framework,

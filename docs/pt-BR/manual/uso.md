@@ -3,6 +3,17 @@
 TODO: escrever de verdade quando o projeto rodar. O esqueleto abaixo é o
 comportamento pretendido.
 
+## Antes de tudo
+
+```bash
+cvb doctor      # diz o que falta
+cvb voices      # as vozes cadastradas no voice-clone
+cvb say "teste" # falado — voz clonada | voz do sistema
+```
+
+O `cvb say` sempre diz **por qual caminho** falou. "voz do sistema" significa que
+o sidecar não respondeu — a fala saiu, mas não na sua voz.
+
 ## O básico
 
 Abra os CLIs como você já abre. Com os hooks instalados, o `cli-voice-bridge`

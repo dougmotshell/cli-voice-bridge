@@ -8,10 +8,10 @@ Roda em Linux, macOS e Windows, em qualquer terminal, inclusive os integrados do
 VS Code e do IntelliJ. Tudo local: nenhum áudio, transcrição ou texto de trabalho
 sai da máquina. Projeto pessoal, sem uso comercial.
 
-> **Estado: esqueleto que roda.** Compila sem avisos, 21 testes passam, e o
-> caminho evento → momento foi exercitado ponta a ponta com payloads reais dos
-> três CLIs. Fala, escuta, fila, configuração e instalador de hooks ainda não
-> existem — tudo marcado `TODO:` nos documentos.
+> **Estado: já fala.** Compila sem avisos, 42 testes passam, e o caminho
+> evento → momento → voz foi exercitado ponta a ponta com payloads reais dos três
+> CLIs. Faltam a fila de prioridade, a entrada por voz e o instalador de hooks —
+> tudo marcado `TODO:` nos documentos.
 
 ## Documentação
 
@@ -66,18 +66,29 @@ Rust estável (verificado com 1.98.0), edição 2021. Sem Rust na máquina:
 ## Experimentar agora
 
 ```bash
+./target/release/cvb doctor          # diz o que falta antes de qualquer coisa
+
 export CVB_SOCKET=/tmp/cvb.sock
-./target/release/cvb-hookd &                    # o daemon imprime os momentos
+./target/release/cvb-hookd &         # o daemon imprime os momentos e fala
 
 echo '{"session_id":"s1","hook_event_name":"PermissionRequest","tool_name":"Bash"}' \
   | ./target/release/cvb-hook --origem claude --transporte hook
 # → decision.needed [Claude/hook] quer usar Bash
+# → e, se houver voz configurada: "Claude quer usar Bash. Autorizo?"
 
-./target/release/cvb doctor
-./target/release/cvb daemon status
+./target/release/cvb say "teste"     # falado — voz clonada | voz do sistema
+./target/release/cvb voices
+```
+
+Sem o sidecar de síntese de pé, ele fala com a voz do sistema (`espeak-ng`,
+`say`, SAPI) e diz que foi por aí — nunca fica mudo. Para a voz clonada:
+
+```bash
+CVB_VOICE_CLONE=~/www/voice-clone \
+  ~/www/voice-clone/.venv/bin/python sidecar/servidor.py
 ```
 
 ## Próximo passo
 
-Implementar o instalador de hooks (`cvb install`) e a ponte com o sidecar de
-síntese. Ver `AGENTS.md`, seção *Comandos*.
+O instalador de hooks (`cvb install`), para dispensar configurar hook à mão. Ver
+`AGENTS.md`, seção *Comandos*.

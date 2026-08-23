@@ -43,6 +43,21 @@ appends the `cvb` entry, and preserves the rest. If you already use other hooks 
 `config.toml`; when it changes, it asks for confirmation in the next session. If
 the hook seems inert, that is why: open Codex and confirm.
 
+## Start the synthesis sidecar
+
+Without it, the project speaks with the system voice and says so. With it, it
+speaks in your cloned voice.
+
+```bash
+CVB_VOICE_CLONE=~/www/voice-clone \
+  ~/www/voice-clone/.venv/bin/python sidecar/servidor.py
+```
+
+Leave it running. The first utterance takes ~30 s, which is XTTS-v2 loading; from
+the second on it is immediate, and repeated phrases come from the cache.
+
+TODO: supervision — today, if the sidecar dies, nothing brings it back.
+
 ## Check
 
 ```bash

@@ -3,8 +3,22 @@
 **Capacidade:** transformar momentos em fala, na voz clonada, sem virar ruído.
 
 **ADRs que restringem este spec:** [ADR-0003](../decisions/0003-tts-delegado-ao-voice-clone.md),
-[ADR-0007](../decisions/0007-esquema-canonico-de-momentos.md).
+[ADR-0007](../decisions/0007-esquema-canonico-de-momentos.md),
+[ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md).
 **Nível C4:** [componente](../architecture/03-component.md) — `hookd::speech`.
+
+## Estado
+
+| Parte | Estado |
+|---|---|
+| Redação | **implementada** — `speech::redact`, com testes de isca |
+| Moldes e modo discreto | **implementados** — `speech::template` |
+| Ponte com o sidecar | **implementada** — `core::sidecar` |
+| Cache de frases | **implementado** — indexado por (voz, idioma, texto) |
+| Reprodução e degradação | **implementadas** — `core::audio` ([ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md)) |
+| Política por urgência | **parcial** — `sempre` e `nunca` valem; `ausente` cala, por falta de detecção de presença |
+| Fila, prioridade, colapso, corte | **não existem.** `Voz::falar` é síncrono e serializado por mutex |
+| Resumo de mensagem longa | **não existe** — hoje só um corte por número de caracteres |
 
 ## Problema
 
@@ -90,13 +104,20 @@ sidecar é escrito aqui e importa `vozclone` do venv de lá. A segunda opção
 respeita o "somente leitura" e é a hipótese de trabalho.
 
 **Degradação.** Sidecar morto ou XTTS indisponível não pode calar o sistema: cai
-para a voz do sistema operacional (`espeak-ng`/`say`/SAPI) com aviso na GUI, e o
-`cvb doctor` diz o porquê. Falar com voz feia é melhor que não falar que o agente
+para a voz do sistema operacional (`espeak-ng`/`say`/SAPI) com aviso, e o
+`cvb doctor` diz o porquê. O `cvb say` mostra por qual caminho falou — "voz
+clonada" e "voz do sistema" são resultados bem diferentes, e confundi-los
+esconderia um sidecar morto. Falar com voz feia é melhor que não falar que o agente
 está travado esperando permissão.
 
 **Cache.** Frases fixas ("terminei", "preciso de permissão") são poucas e se
 repetem. Sintetizar uma vez, guardar o WAV indexado por (voz, idioma, texto).
-Isso troca a maior parte das falas por reprodução instantânea.
+Isso troca a maior parte das falas por reprodução instantânea. Fica em
+`<dados>/cache-audio/`, com nome derivado de um hash não criptográfico — é um
+nome de arquivo, não uma garantia de integridade.
+
+TODO: o cache não tem limite nem expiração. Precisa de um teto antes que o uso
+prolongado o transforme num problema.
 
 ## Privacidade
 

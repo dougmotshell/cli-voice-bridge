@@ -17,6 +17,7 @@ reaproveita.
 | [0006](0006-stt-offline-na-maquina.md) | Reconhecimento de fala offline, na máquina | aceito no princípio; motor em aberto |
 | [0007](0007-esquema-canonico-de-momentos.md) | Um esquema canônico de "momentos" | aceito |
 | [0008](0008-ipc-por-socket-local.md) | IPC por socket local, nunca por porta TCP | aceito |
+| [0009](0009-reproducao-por-reprodutor-do-sistema.md) | Reproduzir áudio pelo reprodutor do sistema, não por biblioteca | aceito |
 
 TODO: decisões ainda não tomadas, que virarão ADR quando houver medição —
 motor de STT (fecha o 0006), resumidor de mensagem longa, framework de

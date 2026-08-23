@@ -79,13 +79,18 @@ State per container:
 
 | Container | State |
 |---|---|
-| `core` | Useful skeleton: moments, protocol, IPC (UNIX only), paths, configuration |
+| `core` | Moments, protocol, IPC (UNIX only), paths, configuration, audio playback, sidecar client |
 | `hookc` | Working: reads payload, handshakes, dumps, exits |
-| `hookd` | Listens and normalizes; no policy, queue, speech, or listening yet |
-| `cvb` | `doctor`, `daemon status`, `mute`/`unmute` work; the rest exits with an explicit error |
+| `hookd` | Listens, normalizes, applies the policy, and **speaks**; no priority queue and no listening |
+| `cvb` | `doctor`, `daemon status`, `say`, `voices`, `mute`/`unmute` work; the rest exits with an explicit error |
 | `ptywrap` | Declared; exits saying it was not implemented |
 | GUI | Not created — see `gui/README.md` |
-| `sidecar` | Loop and protocol written; synthesis never exercised |
+| `sidecar` | Loop and protocol written; synthesis with real XTTS never exercised |
+
+**Why `audio` and `sidecar` live in `core` and not in `hookd`.** `cvb doctor`
+has to check the player and the sidecar **without** the daemon running. The
+boundary that came out of it is a useful one: `core` holds shared mechanism,
+`hookd` holds policy (`redact`, `template`, when to speak).
 
 ## Lifecycle
 

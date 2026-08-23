@@ -51,10 +51,12 @@ graph TB
 | `adapters::*` | Traduzir o dialeto de cada CLI. Um módulo por CLI | [event-normalization](../specs/event-normalization.md) |
 | `core::normalize` | Momento canônico e deduplicação entre transportes | [event-normalization](../specs/event-normalization.md) |
 | `policy` | Decidir se fala, com que urgência, considerando presença e perfil | [speech-output](../specs/speech-output.md) |
-| `redact` | Tirar segredo antes de qualquer outra coisa | [speech-output](../specs/speech-output.md) |
-| `template` / `summarize` | Momento vira frase curta em pt-BR | [speech-output](../specs/speech-output.md) |
-| `speech::queue` | Prioridade, colapso de repetidos, corte, expiração | [speech-output](../specs/speech-output.md) |
-| `speech::tts` | Sidecar, cache de frases fixas, fallback para a voz do SO | [speech-output](../specs/speech-output.md) |
+| `speech::redact` | Tirar segredo antes de qualquer outra coisa | [speech-output](../specs/speech-output.md) |
+| `speech::template` | Momento vira frase curta em pt-BR | [speech-output](../specs/speech-output.md) |
+| `speech::Voz` | Orquestra redigir → sintetizar → tocar, com cache e degradação | [speech-output](../specs/speech-output.md) |
+| `core::sidecar` | Cliente do sidecar de síntese | [speech-output](../specs/speech-output.md) |
+| `core::audio` | Reprodução por programa do sistema e voz de emergência | [ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md) |
+| `speech::queue` | Prioridade, colapso de repetidos, corte, expiração — **não existe ainda** | [speech-output](../specs/speech-output.md) |
 | `listen::*` | Atalho, captura, VAD, transcrição, resolução | [speech-input](../specs/speech-input.md) |
 | `reply` | Entregar a resposta pelo caminho certo de cada CLI | [speech-input](../specs/speech-input.md) |
 | `core::config` | Camadas de configuração e recarga a quente | [configuration](../specs/configuration.md) |
@@ -68,6 +70,14 @@ acrescentar um quarto CLI sem tocar no núcleo
 
 `redact` roda **antes** de `template` e de qualquer log. Segredo não pode chegar
 ao molde nem ao disco.
+
+`core::audio` e `core::sidecar` ficam no núcleo, não no `hookd`, porque o
+`cvb doctor` precisa checá-los sem o daemon de pé. A regra que sobrou: **`core` é
+mecanismo, `hookd` é política.**
+
+Hoje `Voz::falar` é síncrono e serializado por um mutex — sem fila, duas threads
+falando juntas produziriam áudios sobrepostos. A fila com prioridade, colapso e
+corte continua por fazer.
 
 ## Nível 4 (código)
 

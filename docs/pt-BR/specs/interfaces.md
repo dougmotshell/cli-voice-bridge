@@ -29,7 +29,8 @@ promessa.
 | `cvb install [--cli …] [--dry-run]` | Instala/atualiza hooks, compondo com os existentes |
 | `cvb uninstall [--cli …]` | Remove só o que instalou |
 | `cvb daemon [start\|stop\|status\|logs]` | Ciclo de vida do `hookd` |
-| `cvb say <texto>` | Testa a saída de voz fim a fim |
+| `cvb say <texto>` | Testa a saída de voz fim a fim; diz por qual caminho falou |
+| `cvb voices` | Lista as vozes cadastradas no `voice-clone` |
 | `cvb listen` | Testa a entrada de voz e mostra a transcrição |
 | `cvb wrap -- <cli> [args]` | Abre um CLI dentro do wrapper PTY |
 | `cvb console --cli <nome>` | Modo cliente de protocolo (ACP/app-server) |

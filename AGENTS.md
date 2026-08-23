@@ -9,9 +9,9 @@ Codex CLI, Copilot CLI). Fala em voz alta os momentos em que o agente tenta
 interagir — pedido de permissão, tarefa concluída, subagente iniciado, pergunta
 pendente — e aceita a resposta por voz. Uso pessoal, sem fim comercial.
 
-**Estado: esqueleto que roda.** O workspace existe e o caminho evento → momento
-está de pé e testado. Fala, escuta, fila, configuração e instalador de hooks
-ainda não existem — estão marcados `TODO:` aqui e nos specs.
+**Estado: fala.** O caminho evento → momento → voz está de pé e testado ponta a
+ponta. Faltam a fila de prioridade, a entrada por voz e o instalador de hooks —
+marcados `TODO:` aqui e nos specs.
 
 ## Stack
 
@@ -43,7 +43,8 @@ cargo fmt --all
 
 cvb doctor                         # diagnóstico — SEMPRE o primeiro passo
 cvb daemon status
-cvb say "texto"                    # TODO: depende do sidecar
+cvb say "texto"                    # fala; diz por qual caminho falou
+cvb voices                         # vozes cadastradas no voice-clone
 cvb install --cli claude,codex     # TODO: instalador de hooks
 
 # sidecar de síntese, com o interpretador do voice-clone

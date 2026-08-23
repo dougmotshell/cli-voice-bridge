@@ -7,8 +7,22 @@
 noise.
 
 **ADRs constraining this spec:** [ADR-0003](../decisions/0003-tts-delegado-ao-voice-clone.md),
-[ADR-0007](../decisions/0007-esquema-canonico-de-momentos.md).
+[ADR-0007](../decisions/0007-esquema-canonico-de-momentos.md),
+[ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md).
 **C4 level:** [component](../architecture/03-component.md) — `hookd::speech`.
+
+## State
+
+| Part | State |
+|---|---|
+| Redaction | **implemented** — `speech::redact`, with decoy tests |
+| Templates and discreet mode | **implemented** — `speech::template` |
+| Bridge to the sidecar | **implemented** — `core::sidecar` |
+| Phrase cache | **implemented** — keyed by (voice, language, text) |
+| Playback and degradation | **implemented** — `core::audio` ([ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md)) |
+| Policy by urgency | **partial** — `sempre` and `nunca` hold; `ausente` stays silent, for lack of presence detection |
+| Queue, priority, collapsing, cutting | **do not exist.** `Voz::falar` is synchronous and mutex-serialized |
+| Summary of a long message | **does not exist** — today just a character-count cut |
 
 ## Problem
 
@@ -95,13 +109,19 @@ conversation), or the sidecar is written here and imports `vozclone` from that
 venv. The second option respects "read-only" and is the working hypothesis.
 
 **Degradation.** A dead sidecar or unavailable XTTS must not mute the system: it
-falls back to the operating system voice (`espeak-ng`/`say`/SAPI) with a warning
-in the GUI, and `cvb doctor` says why. Speaking with an ugly voice beats not
+falls back to the operating system voice (`espeak-ng`/`say`/SAPI) with a warning,
+and `cvb doctor` says why. `cvb say` reports which path it spoke through —
+"cloned voice" and "system voice" are very different results, and conflating them
+would hide a dead sidecar. Speaking with an ugly voice beats not
 saying that the agent is stuck waiting for permission.
 
 **Cache.** Fixed phrases ("done", "I need permission") are few and repeat.
 Synthesize once, store the WAV keyed by (voice, language, text). That turns most
-utterances into instant playback.
+utterances into instant playback. It lives in `<data>/cache-audio/`, named from a
+non-cryptographic hash — it is a file name, not an integrity guarantee.
+
+TODO: the cache has no size limit and no expiry. It needs a ceiling before
+prolonged use turns it into a problem.
 
 ## Privacy
 

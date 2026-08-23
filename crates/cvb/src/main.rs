@@ -60,6 +60,8 @@ enum Comando {
     },
     /// Testa a saída de voz fim a fim
     Say { texto: String },
+    /// Lista as vozes cadastradas no voice-clone
+    Voices,
     /// Testa a entrada de voz e mostra a transcrição
     Listen,
     /// Abre um CLI dentro do wrapper de pseudo-terminal
@@ -135,6 +137,7 @@ fn main() -> ExitCode {
         Comando::Mute { segundos } => pedir(Requisicao::Silenciar { segundos }),
         Comando::Unmute => pedir(Requisicao::Retomar),
         Comando::Say { texto } => pedir(Requisicao::Falar { texto }),
+        Comando::Voices => vozes(),
 
         // Estes ainda não existem. Repetir o que foi pedido não é enfeite: é o
         // que deixa claro que o argumento foi entendido e não engolido.
@@ -209,6 +212,10 @@ fn pedir(req: Requisicao) -> ExitCode {
     }
     match ler_resposta(conexao) {
         Some(Resposta::Ok) => ExitCode::SUCCESS,
+        Some(Resposta::Falado { como }) => {
+            println!("falado — {como}");
+            ExitCode::SUCCESS
+        }
         Some(Resposta::Erro { mensagem }) => {
             eprintln!("cvb: {mensagem}");
             ExitCode::from(SAIDA_FALHA)
@@ -223,6 +230,37 @@ fn pedir(req: Requisicao) -> ExitCode {
             ExitCode::SUCCESS
         }
         None => ExitCode::SUCCESS,
+    }
+}
+
+fn vozes() -> ExitCode {
+    let mut conexao = match conectar() {
+        Ok(c) => c,
+        Err(codigo) => return codigo,
+    };
+    if ipc::enviar_linha(&mut conexao, &Requisicao::Vozes).is_err() {
+        return ExitCode::from(SAIDA_FALHA);
+    }
+    match ler_resposta(conexao) {
+        Some(Resposta::Vozes { vozes }) if vozes.is_empty() => {
+            println!("Nenhuma voz cadastrada no voice-clone.");
+            println!("Cadastre uma lá: falar.py cadastrar <nome> <audio.wav>");
+            ExitCode::SUCCESS
+        }
+        Some(Resposta::Vozes { vozes }) => {
+            for v in vozes {
+                println!("{v}");
+            }
+            ExitCode::SUCCESS
+        }
+        Some(Resposta::Erro { mensagem }) => {
+            eprintln!("cvb: {mensagem}");
+            ExitCode::from(SAIDA_FALHA)
+        }
+        _ => {
+            eprintln!("cvb: resposta inesperada do daemon");
+            ExitCode::from(SAIDA_FALHA)
+        }
     }
 }
 

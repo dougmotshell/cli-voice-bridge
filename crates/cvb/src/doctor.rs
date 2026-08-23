@@ -11,6 +11,9 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use cvb_core::audio::Reprodutor;
+use cvb_core::config::Config;
+use cvb_core::sidecar::Sidecar;
 use cvb_core::{caminhos, ipc};
 
 enum Veredito {
@@ -25,13 +28,20 @@ struct Verificacao {
 }
 
 pub fn executar(offline: bool) -> ExitCode {
+    // Cada verificação é independente: uma falha não impede as outras de
+    // rodarem, porque o valor está em ver o quadro inteiro de uma vez.
+    let config = Config::carregar();
+
     let mut checagens = vec![
-        verificar_config(),
-        verificar_voice_clone(),
+        verificar_config(&config),
+        verificar_voice_clone(config.as_ref().ok()),
+        verificar_voz(config.as_ref().ok()),
         verificar_clis(),
+        verificar_reprodutor(config.as_ref().ok()),
         verificar_plataforma(),
     ];
     if !offline {
+        checagens.push(verificar_sidecar());
         checagens.push(verificar_daemon());
     }
 
@@ -66,16 +76,18 @@ pub fn executar(offline: bool) -> ExitCode {
     }
 }
 
-fn verificar_config() -> Verificacao {
+fn verificar_config(config: &Result<Config, cvb_core::config::ErroConfig>) -> Verificacao {
     let arquivo = caminhos::arquivo_config();
-    let veredito = if arquivo.exists() {
-        Veredito::Ok(arquivo.display().to_string())
-    } else {
+    let veredito = match config {
+        // Arquivo inválido é falha: seguir com os padrões faria a pessoa achar
+        // que o que ela escreveu está valendo.
+        Err(e) => Veredito::Falha(e.to_string()),
+        Ok(_) if arquivo.exists() => Veredito::Ok(arquivo.display().to_string()),
         // Ausência não é falha: os padrões embutidos bastam para começar.
-        Veredito::Aviso(format!(
+        Ok(_) => Veredito::Aviso(format!(
             "ausente, usando os padrões ({})",
             arquivo.display()
-        ))
+        )),
     };
     Verificacao {
         titulo: "configuração",
@@ -83,16 +95,62 @@ fn verificar_config() -> Verificacao {
     }
 }
 
-/// O `voice-clone` é dependência externa somente leitura (ADR-0003).
-///
-/// TODO: o caminho vem da configuração, que ainda não é lida. Por ora só o
-/// ambiente, para nunca embutir um caminho no código.
-fn verificar_voice_clone() -> Verificacao {
-    let raiz = std::env::var_os("CVB_VOICE_CLONE").map(PathBuf::from);
+fn verificar_voz(config: Option<&Config>) -> Verificacao {
+    let veredito = match config.map(|c| c.geral.voz.clone()) {
+        Some(v) if !v.is_empty() => Veredito::Ok(v),
+        _ => Veredito::Aviso(
+            "`geral.voz` vazio — vou falar com a voz do sistema; veja `cvb voices`".into(),
+        ),
+    };
+    Verificacao {
+        titulo: "voz",
+        veredito,
+    }
+}
+
+fn verificar_reprodutor(config: Option<&Config>) -> Verificacao {
+    let configurado = config
+        .map(|c| c.geral.reprodutor.clone())
+        .unwrap_or_default();
+    let veredito = match Reprodutor::descobrir(&configurado) {
+        Some(r) => Veredito::Ok(r.nome().to_string()),
+        None => Veredito::Falha(format!(
+            "nenhum encontrado — procurei por {}; fixe um em `geral.reprodutor`",
+            Reprodutor::candidatos().join(", ")
+        )),
+    };
+    Verificacao {
+        titulo: "reprodutor de áudio",
+        veredito,
+    }
+}
+
+fn verificar_sidecar() -> Verificacao {
+    let sidecar = Sidecar::novo();
+    let veredito = if sidecar.vivo() {
+        Veredito::Ok(sidecar.endereco().display().to_string())
+    } else {
+        // Não é falha: existe o caminho da voz do sistema, e ele é o combinado
+        // (ADR-0003). Mas a pessoa precisa saber por que a voz está feia.
+        Veredito::Aviso(format!(
+            "fora do ar em {} — a fala sai pela voz do sistema",
+            sidecar.endereco().display()
+        ))
+    };
+    Verificacao {
+        titulo: "sidecar de síntese",
+        veredito,
+    }
+}
+
+fn verificar_voice_clone(config: Option<&Config>) -> Verificacao {
+    let raiz = config
+        .and_then(|c| c.voice_clone.raiz_resolvida())
+        .or_else(|| std::env::var_os("CVB_VOICE_CLONE").map(PathBuf::from));
 
     let veredito = match raiz {
         None => Veredito::Aviso(
-            "caminho não configurado — defina CVB_VOICE_CLONE ou `voice_clone.raiz`".into(),
+            "caminho não configurado — defina `voice_clone.raiz` ou CVB_VOICE_CLONE".into(),
         ),
         Some(r) if !r.join("falar.py").is_file() => {
             Veredito::Falha(format!("não achei falar.py em {}", r.display()))

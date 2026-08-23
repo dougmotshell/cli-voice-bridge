@@ -6,6 +6,17 @@
 TODO: write this properly once the project runs end to end. The skeleton below is
 the intended behavior.
 
+## Before anything else
+
+```bash
+cvb doctor      # says what is missing
+cvb voices      # the voices registered in voice-clone
+cvb say "teste" # falado — voz clonada | voz do sistema
+```
+
+`cvb say` always reports **which path** it spoke through. "voz do sistema" means
+the sidecar did not answer — the speech came out, but not in your voice.
+
 ## The basics
 
 Open the CLIs the way you already do. With the hooks installed,

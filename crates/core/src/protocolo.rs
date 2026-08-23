@@ -50,6 +50,9 @@ pub enum Requisicao {
 
     /// Assina o fluxo de momentos. É o `cvb events --follow` e o painel da GUI.
     Assinar,
+
+    /// Lista as vozes cadastradas no `voice-clone`.
+    Vozes,
 }
 
 /// O que o daemon responde.
@@ -69,6 +72,14 @@ pub enum Resposta {
         sessoes: usize,
         fila: usize,
         silenciado: bool,
+    },
+    Vozes {
+        vozes: Vec<String>,
+    },
+    /// Falou — e por qual caminho. `cvb say` mostra isso, porque "falou" e
+    /// "falou pela voz de emergência" são resultados bem diferentes.
+    Falado {
+        como: String,
     },
     /// Um momento normalizado, empurrado para quem assinou.
     Momento {

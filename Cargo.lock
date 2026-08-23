@@ -129,6 +129,7 @@ name = "cvb-hookd"
 version = "0.1.0"
 dependencies = [
  "cvb-core",
+ "serde",
  "serde_json",
 ]
 

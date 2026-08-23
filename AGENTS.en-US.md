@@ -12,9 +12,9 @@ Codex CLI, Copilot CLI). It speaks aloud the moments when the agent tries to
 interact — permission request, task finished, subagent started, pending question
 — and accepts the answer by voice. Personal use, non-commercial.
 
-**State: a skeleton that runs.** The workspace exists and the event → moment path
-is up and tested. Speech, listening, queue, configuration, and the hook installer
-do not exist yet — they are marked `TODO:` here and in the specs.
+**State: it speaks.** The event → moment → voice path is up and tested end to
+end. Still missing: the priority queue, voice input, and the hook installer —
+marked `TODO:` here and in the specs.
 
 ## Stack
 
@@ -46,7 +46,8 @@ cargo fmt --all
 
 cvb doctor                         # diagnostics — ALWAYS the first step
 cvb daemon status
-cvb say "text"                     # TODO: depends on the sidecar
+cvb say "text"                     # speaks; reports which path it used
+cvb voices                         # voices registered in voice-clone
 cvb install --cli claude,codex     # TODO: hook installer
 
 # synthesis sidecar, with voice-clone's interpreter
