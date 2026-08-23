@@ -1,0 +1,37 @@
+# Rust
+/target/
+**/*.rs.bk
+
+# Tauri
+/gui/node_modules/
+/gui/dist/
+/gui/src-tauri/target/
+
+# Python (sidecar)
+__pycache__/
+*.py[cod]
+.venv/
+
+# Dados sensíveis — nada disto entra no git.
+# Áudio de voz é dado biométrico; transcrição carrega o conteúdo do trabalho.
+/gravacoes/
+/transcricoes/
+/cache-audio/
+*.wav
+*.mp3
+*.flac
+
+# Modelos de STT: pesados, versionados fora do git
+/modelos/
+
+# Configuração e log locais
+/config.local.toml
+/logs/
+*.log
+
+# Backup de configuração de hooks feito pelo cvb install
+*.cvb-backup
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
