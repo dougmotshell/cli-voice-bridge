@@ -185,6 +185,9 @@ impl Voz {
         // Frases fixas — "terminei", "preciso de permissão" — são poucas e se
         // repetem. Sintetizar uma vez troca a maior parte das falas por
         // reprodução instantânea.
+        //
+        // O cache não tem teto e nada é removido: a lacuna, e o que falta
+        // decidir para fechá-la, estão em `docs/pt-BR/specs/speech-output.md`.
         let arquivo = self.caminho_no_cache(texto);
         let do_cache = arquivo.is_file();
 

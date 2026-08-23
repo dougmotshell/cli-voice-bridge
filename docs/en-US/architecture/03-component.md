@@ -54,6 +54,7 @@ graph TB
 | `adapters::*` | Translate each CLI's dialect. One module per CLI | [event-normalization](../specs/event-normalization.md) |
 | `core::normalize` | Canonical moment and deduplication across transports | [event-normalization](../specs/event-normalization.md) |
 | `policy` | Decide whether to speak, and how urgently, given presence and profile | [speech-output](../specs/speech-output.md) |
+| `policy::presenca` | Present or away — **does not exist yet** | [presence-detection](../specs/presence-detection.md) |
 | `speech::redact` | Strip secrets before anything else | [speech-output](../specs/speech-output.md) |
 | `speech::template` | Turn a moment into a short pt-BR phrase | [speech-output](../specs/speech-output.md) |
 | `speech::Voz` | Orchestrates redact → synthesize → play, with cache and degradation | [speech-output](../specs/speech-output.md) |

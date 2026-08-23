@@ -98,5 +98,6 @@ boundary that came out of it is a useful one: `core` holds shared mechanism,
 for it) or at login, depending on configuration. A `hookc` that finds no daemon
 exits with code 0 and in silence — it never blocks the agent.
 
-TODO: decide the autostart mechanism per system: user systemd unit, LaunchAgent,
-Scheduled Task.
+Startup, graceful shutdown, single instance, and sidecar supervision live in
+[daemon-lifecycle](../specs/daemon-lifecycle.md), with what already works and
+what does not.

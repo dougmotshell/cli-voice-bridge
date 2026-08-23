@@ -36,9 +36,44 @@ if it is restarting on every utterance, that is a defect — check the log.
 
 ## It speaks too much
 
-Adjust per moment instead of muting everything. `falar = "ausente"` on
-medium-urgency moments usually settles it: it speaks only when you are not
-looking. See [configuracao.md](configuracao.md).
+Adjust per moment instead of muting everything. See
+[configuracao.md](configuracao.md).
+
+**Careful: `falar = "ausente"` does not work as it should yet.** It ought to speak
+only when you are not looking, but presence detection does not exist — so today
+`"ausente"` simply **stays silent**. That is the documented fallback (assume
+present, speak less), not a silent defect. In the meantime, use `"sempre"` for
+what you want to hear and `"nunca"` for the rest. What is missing is in
+[presence-detection](../specs/presence-detection.md).
+
+## The audio cache only grows
+
+True, and a known gap: it stores one WAV per phrase and never deletes anything.
+In practice it grows slowly, because phrases repeat — but a summarized assistant
+message is unique every time, and switching voice invalidates everything without
+deleting it.
+
+To clear it by hand:
+
+| System | Directory |
+|---|---|
+| Linux | `~/.local/share/cli-voice-bridge/cache-audio/` |
+| macOS | `~/Library/Application Support/cli-voice-bridge/cache-audio/` |
+| Windows | `%LOCALAPPDATA%\cli-voice-bridge\cache-audio\` |
+
+Deleting the directory is safe: the next utterance synthesizes again. The
+automatic ceiling is still undecided — see
+[speech-output](../specs/speech-output.md).
+
+## The daemon died and left things behind
+
+Death by signal does not run the cleanup, so the socket stays on disk. Not
+serious: the next startup detects that nobody answers at that address and removes
+it. If audio kept playing after the daemon died, there is no way to cut it
+through `cvb` — wait it out or kill the player process.
+
+Graceful shutdown is a known gap; what is missing is in
+[daemon-lifecycle](../specs/daemon-lifecycle.md).
 
 ## It does not listen
 

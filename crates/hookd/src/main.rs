@@ -69,9 +69,10 @@ fn main() -> std::process::ExitCode {
             cvb_core::audio::Reprodutor::candidatos().join(", ")
         ),
     }
-    // TODO: morrer por sinal (SIGTERM, SIGINT) não roda o `Drop` do `Ouvinte`,
-    // então o socket fica no disco. Não é grave — `Ouvinte::abrir` detecta o
-    // órfão e o remove —, mas um manipulador de sinal deixaria mais limpo.
+    // Morrer por sinal não roda o `Drop` do `Ouvinte`, então o socket fica no
+    // disco. Não é grave — `Ouvinte::abrir` detecta o órfão e o remove — mas o
+    // encerramento ordenado que falta está em
+    // `docs/pt-BR/specs/daemon-lifecycle.md`.
     let estado = Arc::new(Mutex::new(Estado::novo()));
 
     loop {
@@ -253,10 +254,11 @@ fn anunciar(evento: &Evento, fila: &Fila, config: &Config) {
     }
     match config.quando_falar(evento.momento) {
         QuandoFalar::Nunca => return,
-        // TODO: `ausente` deveria falar só quando a pessoa não está olhando, e
-        // ainda não há detecção de foco nos três sistemas. Até haver, o padrão
-        // documentado é assumir presente e falar menos — silêncio incomoda menos
-        // que ruído, e a GUI ainda mostra o momento.
+        // `ausente` deveria falar só quando a pessoa não está olhando. A
+        // detecção de presença ainda não existe — o porquê, as duas leituras
+        // possíveis de "ausente" e o caminho por sistema estão em
+        // `docs/pt-BR/specs/presence-detection.md`. Até lá vale o fallback
+        // documentado: assumir presente e falar menos.
         QuandoFalar::Ausente => return,
         QuandoFalar::Sempre => {}
     }

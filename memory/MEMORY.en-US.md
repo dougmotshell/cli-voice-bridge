@@ -11,6 +11,8 @@ What goes here is what **cannot** be derived from the code or the git history.
   what the neighbouring project already learned and is not worth rediscovering
 - [Measurements](measurements.en-US.md) — hook client latency and binary sizes,
   with the date
+- [Known gaps](lacunas-conhecidas.en-US.md) — what does not work yet, why, and
+  where it is described
 
 TODO: add entries as the project moves. Obvious candidates: STT latency on the
 target machine, and what broke in which CLI update.

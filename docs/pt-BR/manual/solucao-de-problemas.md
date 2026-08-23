@@ -33,9 +33,41 @@ fica vivo; se ele está reiniciando a cada fala, é defeito — veja o log.
 
 ## Fala demais
 
-Ajuste por momento em vez de calar tudo. `falar = "ausente"` nos momentos de
-urgência média costuma resolver: fala só quando você não está olhando. Ver
-[configuracao.md](configuracao.md).
+Ajuste por momento em vez de calar tudo. Ver [configuracao.md](configuracao.md).
+
+**Atenção: `falar = "ausente"` ainda não funciona como deveria.** Ele deveria
+falar só quando você não está olhando, mas a detecção de presença não existe —
+então hoje `"ausente"` simplesmente **cala**. É o fallback documentado (assumir
+presente e falar menos), não um defeito silencioso. Enquanto isso, use
+`"sempre"` no que você quer ouvir e `"nunca"` no resto. O que falta está em
+[presence-detection](../specs/presence-detection.md).
+
+## O cache de áudio só cresce
+
+É verdade, e é lacuna conhecida: ele guarda um WAV por frase e nunca apaga nada.
+Na prática cresce devagar, porque as frases se repetem — mas mensagem de
+assistente resumida é única a cada vez, e trocar de voz invalida tudo sem apagar.
+
+Para limpar à mão:
+
+| Sistema | Diretório |
+|---|---|
+| Linux | `~/.local/share/cli-voice-bridge/cache-audio/` |
+| macOS | `~/Library/Application Support/cli-voice-bridge/cache-audio/` |
+| Windows | `%LOCALAPPDATA%\cli-voice-bridge\cache-audio\` |
+
+Apagar o diretório é seguro: a próxima fala sintetiza de novo. O teto automático
+está por decidir — ver [speech-output](../specs/speech-output.md).
+
+## O daemon morreu e deixou coisa para trás
+
+Morte por sinal não roda a limpeza, então o socket fica no disco. Não é grave: o
+arranque seguinte detecta que ninguém atende naquele endereço e remove sozinho.
+Se um áudio ficou tocando depois de o daemon morrer, não há como cortá-lo pelo
+`cvb` — espere terminar ou mate o processo do reprodutor.
+
+Encerramento ordenado é lacuna conhecida; o que falta está em
+[daemon-lifecycle](../specs/daemon-lifecycle.md).
 
 ## Não escuta
 

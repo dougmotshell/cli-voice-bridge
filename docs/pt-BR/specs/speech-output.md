@@ -124,8 +124,30 @@ Isso troca a maior parte das falas por reprodução instantânea. Fica em
 `<dados>/cache-audio/`, com nome derivado de um hash não criptográfico — é um
 nome de arquivo, não uma garantia de integridade.
 
-TODO: o cache não tem limite nem expiração. Precisa de um teto antes que o uso
-prolongado o transforme num problema.
+**O cache não tem teto, e isso é uma lacuna real.** Ele cresce a cada frase nova
+e nada nunca é removido. Não incomoda hoje porque as frases se repetem muito — o
+conjunto de coisas que o projeto diz é pequeno —, mas duas coisas o fazem crescer
+sem limite: mensagem de assistente resumida (cada uma é única) e troca de voz ou
+de idioma, que invalida tudo sem apagar nada.
+
+O que falta decidir, em ordem de importância:
+
+1. **Teto.** Por tamanho em disco (ex.: 200 MB) ou por número de arquivos.
+   Tamanho é o que a pessoa entende, e é o que aparece quando incomoda.
+2. **Política de descarte.** O menos usado recentemente é o candidato óbvio, e
+   exige guardar o instante do último acesso — que o `mtime` já dá de graça, se o
+   sistema de arquivos não estiver montado com `noatime`. Guardar um índice
+   próprio é mais confiável e mais uma coisa para manter em sincronia.
+3. **Quando podar.** No arranque do daemon é o mais simples; junto do
+   encerramento ordenado ([daemon-lifecycle](daemon-lifecycle.md)) é mais
+   oportuno.
+4. **Invalidação por voz e idioma.** A chave já inclui os dois, então trocar de
+   voz não devolve áudio errado — só deixa o antigo ocupando espaço para sempre.
+   Podar por prefixo de chave resolveria, e exige que a chave deixe de ser um
+   hash opaco.
+
+Até haver decisão, `cvb doctor` deveria ao menos **relatar o tamanho do cache**,
+para a lacuna ser visível antes de virar problema. TODO: nem isso existe.
 
 ## Privacidade
 

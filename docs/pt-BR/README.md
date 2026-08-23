@@ -21,5 +21,7 @@ Esta é a **fonte da verdade**. Escreva aqui primeiro; a tradução em
 | [configuration](specs/configuration.md) | Camadas, precedência e o conjunto de chaves |
 | [interfaces](specs/interfaces.md) | CLI e GUI, com paridade real |
 | [portability](specs/portability.md) | Linux, macOS e Windows de verdade |
+| [presence-detection](specs/presence-detection.md) | Saber se a pessoa está por perto — **não implementado**, e é o que falta para `falar = "ausente"` valer |
+| [daemon-lifecycle](specs/daemon-lifecycle.md) | Arranque, encerramento ordenado, instância única e supervisão do sidecar |
 
 As regras que valem nas quatro árvores estão em [`../README.md`](../README.md).

@@ -141,9 +141,10 @@ impl Fila {
 
     /// Para a trabalhadora.
     ///
-    /// TODO: hoje só os testes usam — o daemon roda num laço infinito e morre
-    /// por sinal, sem encerramento ordenado. Quando houver, é aqui que ele
-    /// entra, junto do socket órfão que o `Ouvinte` também deixa para trás.
+    /// Hoje só os testes usam: o daemon roda num laço infinito e morre por
+    /// sinal, sem encerramento ordenado. O que falta — matar o reprodutor,
+    /// descartar a fila, remover o socket — está em
+    /// `docs/pt-BR/specs/daemon-lifecycle.md`.
     #[cfg_attr(not(test), allow(dead_code))]
     pub fn encerrar(&self) {
         let (trava, aviso) = &*self.interno;

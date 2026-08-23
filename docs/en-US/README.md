@@ -21,5 +21,7 @@
 | [configuration](specs/configuration.md) | Layers, precedence, and the set of keys |
 | [interfaces](specs/interfaces.md) | CLI and GUI, with real parity |
 | [portability](specs/portability.md) | Linux, macOS, and Windows for real |
+| [presence-detection](specs/presence-detection.md) | Knowing whether the person is nearby — **not implemented**, and it is what `falar = "ausente"` is waiting on |
+| [daemon-lifecycle](specs/daemon-lifecycle.md) | Startup, graceful shutdown, single instance, and sidecar supervision |
 
 The rules that hold across all four trees live in [`../README.md`](../README.md).

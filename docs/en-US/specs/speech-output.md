@@ -129,8 +129,29 @@ Synthesize once, store the WAV keyed by (voice, language, text). That turns most
 utterances into instant playback. It lives in `<data>/cache-audio/`, named from a
 non-cryptographic hash — it is a file name, not an integrity guarantee.
 
-TODO: the cache has no size limit and no expiry. It needs a ceiling before
-prolonged use turns it into a problem.
+**The cache has no ceiling, and that is a real gap.** It grows with every new
+phrase and nothing is ever removed. It does not hurt today because phrases repeat
+a lot — the set of things the project says is small — but two things make it grow
+without bound: summarized assistant messages (each one unique) and switching
+voice or language, which invalidates everything without deleting anything.
+
+What is left to decide, in order of importance:
+
+1. **The ceiling.** By size on disk (say, 200 MB) or by file count. Size is what
+   the person understands, and it is what shows up when it starts to hurt.
+2. **Eviction policy.** Least-recently-used is the obvious candidate, and it
+   requires keeping the last-access time — which `mtime` already gives for free,
+   unless the filesystem is mounted `noatime`. Keeping an index of our own is
+   more reliable and one more thing to keep in sync.
+3. **When to prune.** At daemon startup is simplest; alongside graceful shutdown
+   ([daemon-lifecycle](daemon-lifecycle.md)) is better timed.
+4. **Invalidation by voice and language.** The key already includes both, so
+   switching voice never returns the wrong audio — it just leaves the old files
+   taking up space forever. Pruning by key prefix would solve it, and requires
+   the key to stop being an opaque hash.
+
+Until there is a decision, `cvb doctor` should at least **report the cache size**,
+so the gap is visible before it becomes a problem. TODO: not even that exists.
 
 ## Privacy
 

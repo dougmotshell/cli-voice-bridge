@@ -94,5 +94,6 @@ O `hookd` sobe sob demanda (o primeiro `hookc` que não achar o socket pede para
 subir) ou no login, conforme configuração. `hookc` que não encontra daemon sai
 com código 0 e em silêncio — nunca trava o agente.
 
-TODO: decidir o mecanismo de autostart por sistema: unidade systemd de usuário,
-LaunchAgent, Tarefa Agendada.
+Arranque, encerramento ordenado, instância única e supervisão do sidecar estão
+em [daemon-lifecycle](../specs/daemon-lifecycle.md), com o que já funciona e o
+que ainda não.
