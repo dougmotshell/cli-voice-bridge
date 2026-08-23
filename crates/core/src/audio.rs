@@ -5,7 +5,7 @@
 //! `libasound2-dev` nem pacote nenhum.
 
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::{Child, Command, Stdio};
 
 /// Candidatos por plataforma, em ordem de preferência.
 #[cfg(target_os = "linux")]
@@ -59,8 +59,12 @@ impl Reprodutor {
         CANDIDATOS.iter().map(|(p, _)| *p).collect()
     }
 
-    /// Toca e espera terminar. Bloqueia: a fila de voz é serial por construção.
-    pub fn tocar(&self, arquivo: &Path) -> Result<(), String> {
+    /// Começa a tocar e devolve o processo, **sem esperar**.
+    ///
+    /// Devolver o filho é o que torna a fala interrompível: cortar, com a
+    /// escolha do ADR-0009, é matar este processo. Quem chama é responsável por
+    /// esperar ou matar — deixar o filho órfão vira zumbi.
+    pub fn iniciar(&self, arquivo: &Path) -> Result<Child, String> {
         let mut cmd = Command::new(&self.programa);
         cmd.args(&self.argumentos);
 
@@ -76,26 +80,23 @@ impl Reprodutor {
         #[cfg(not(windows))]
         cmd.arg(arquivo);
 
-        let estado = cmd
-            .stdin(Stdio::null())
+        cmd.stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())
-            .status()
-            .map_err(|e| format!("{} não executou: {e}", self.programa))?;
-
-        if estado.success() {
-            Ok(())
-        } else {
-            Err(format!("{} saiu com {estado}", self.programa))
-        }
+            .spawn()
+            .map_err(|e| format!("{} não executou: {e}", self.programa))
     }
 }
 
-/// A voz de emergência do sistema.
+/// A voz de emergência do sistema, iniciada sem esperar.
 ///
 /// Feia, e é o ponto: avisar com voz feia é melhor que não avisar que o agente
 /// está travado esperando permissão (ADR-0003).
-pub fn falar_com_voz_do_sistema(texto: &str) -> Result<(), String> {
+///
+/// Percorre os candidatos e usa o primeiro que **existir no PATH**. Falha de
+/// execução tenta o próximo; falha depois de iniciar, não — a essa altura o
+/// processo já é do chamador, e insistir sobreporia duas vozes.
+pub fn iniciar_voz_do_sistema(texto: &str) -> Result<Child, String> {
     let tentativas: Vec<(&str, Vec<String>)> = if cfg!(target_os = "macos") {
         vec![("say", vec![texto.to_string()])]
     } else if cfg!(windows) {
@@ -133,10 +134,9 @@ pub fn falar_com_voz_do_sistema(texto: &str) -> Result<(), String> {
             .stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())
-            .status()
+            .spawn()
         {
-            Ok(e) if e.success() => return Ok(()),
-            Ok(e) => ultimo = format!("{programa} saiu com {e}"),
+            Ok(filho) => return Ok(filho),
             Err(e) => ultimo = format!("{programa} não executou: {e}"),
         }
     }

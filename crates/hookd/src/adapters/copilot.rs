@@ -74,6 +74,8 @@ pub fn mapear(evento: &str, p: &Value) -> (Momento, String) {
             Some(f) => (Momento::FerramentaIniciada, f.to_string()),
             None => (Momento::FerramentaIniciada, String::new()),
         },
+        "userPromptSubmitted" | "userPromptSubmit" => (Momento::PessoaVoltou, String::new()),
+
         "postToolUse" => (
             Momento::FerramentaConcluida,
             primeiro_texto(p, &["toolName"]).unwrap_or_default(),

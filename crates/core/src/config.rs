@@ -43,6 +43,9 @@ pub struct Geral {
     pub perfil: String,
     /// Teto de duração de uma fala. Acima disso, corta e diz que tem mais.
     pub segundos_max_por_fala: u64,
+    /// Momento mais velho que isto é descartado sem falar. Crítico não expira —
+    /// o agente continua parado, por mais tempo que tenha passado.
+    pub segundos_de_relevancia: u64,
     /// Comando que reproduz um WAV. Vazio = descobrir pela plataforma.
     pub reprodutor: Vec<String>,
 }
@@ -54,6 +57,7 @@ impl Default for Geral {
             idioma: "pt-BR".into(),
             perfil: "padrao".into(),
             segundos_max_por_fala: 12,
+            segundos_de_relevancia: 30,
             reprodutor: Vec::new(),
         }
     }

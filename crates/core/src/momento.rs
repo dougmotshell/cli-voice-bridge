@@ -136,6 +136,10 @@ pub enum Momento {
     ContextoCompactando,
     #[serde(rename = "message.text")]
     TextoDeMensagem,
+    /// A pessoa submeteu um prompt. Não é para ser falado — serve para **calar**
+    /// a fala em curso: se ela está digitando, já voltou e não precisa do aviso.
+    #[serde(rename = "user.returned")]
+    PessoaVoltou,
     #[serde(rename = "error")]
     Erro,
 }
@@ -159,6 +163,7 @@ impl Momento {
             Momento::FerramentaFalhou => "tool.failed",
             Momento::ContextoCompactando => "context.compacting",
             Momento::TextoDeMensagem => "message.text",
+            Momento::PessoaVoltou => "user.returned",
             Momento::Erro => "error",
         }
     }
@@ -182,7 +187,8 @@ impl Momento {
             | Momento::ContextoCompactando => Urgencia::Baixa,
             Momento::FerramentaIniciada
             | Momento::FerramentaConcluida
-            | Momento::TextoDeMensagem => Urgencia::Silenciosa,
+            | Momento::TextoDeMensagem
+            | Momento::PessoaVoltou => Urgencia::Silenciosa,
         }
     }
 }

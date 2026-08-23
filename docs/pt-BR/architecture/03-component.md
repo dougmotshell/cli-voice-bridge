@@ -56,7 +56,7 @@ graph TB
 | `speech::Voz` | Orquestra redigir → sintetizar → tocar, com cache e degradação | [speech-output](../specs/speech-output.md) |
 | `core::sidecar` | Cliente do sidecar de síntese | [speech-output](../specs/speech-output.md) |
 | `core::audio` | Reprodução por programa do sistema e voz de emergência | [ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md) |
-| `speech::queue` | Prioridade, colapso de repetidos, corte, expiração — **não existe ainda** | [speech-output](../specs/speech-output.md) |
+| `speech::queue` | Prioridade, colapso de repetidos, expiração e corte | [speech-output](../specs/speech-output.md) |
 | `listen::*` | Atalho, captura, VAD, transcrição, resolução | [speech-input](../specs/speech-input.md) |
 | `reply` | Entregar a resposta pelo caminho certo de cada CLI | [speech-input](../specs/speech-input.md) |
 | `core::config` | Camadas de configuração e recarga a quente | [configuration](../specs/configuration.md) |
@@ -75,9 +75,13 @@ ao molde nem ao disco.
 `cvb doctor` precisa checá-los sem o daemon de pé. A regra que sobrou: **`core` é
 mecanismo, `hookd` é política.**
 
-Hoje `Voz::falar` é síncrono e serializado por um mutex — sem fila, duas threads
-falando juntas produziriam áudios sobrepostos. A fila com prioridade, colapso e
-corte continua por fazer.
+`speech::queue` tem uma trabalhadora própria: o `hookc` do outro lado roda em
+série com o agente de IA e não pode esperar pelo áudio (ADR-0001). Enfileirar é
+imediato; falar acontece depois, noutra thread.
+
+`Voz::falar` continua serializado por mutex — a fila garante que só há uma
+chamada por vez, e o mutex é a rede de segurança para quem chamar de outro lugar
+(o `cvb say`, por exemplo).
 
 ## Nível 4 (código)
 

@@ -59,7 +59,7 @@ graph TB
 | `speech::Voz` | Orchestrates redact → synthesize → play, with cache and degradation | [speech-output](../specs/speech-output.md) |
 | `core::sidecar` | Client of the synthesis sidecar | [speech-output](../specs/speech-output.md) |
 | `core::audio` | Playback through a system program, and the emergency voice | [ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md) |
-| `speech::queue` | Priority, collapsing of repeats, cutting, expiry — **does not exist yet** | [speech-output](../specs/speech-output.md) |
+| `speech::queue` | Priority, collapsing of repeats, expiry, and cutting | [speech-output](../specs/speech-output.md) |
 | `listen::*` | Shortcut, capture, VAD, transcription, resolution | [speech-input](../specs/speech-input.md) |
 | `reply` | Deliver the answer through the right path for each CLI | [speech-input](../specs/speech-input.md) |
 | `core::config` | Configuration layers and hot reload | [configuration](../specs/configuration.md) |
@@ -78,9 +78,13 @@ reach the template or the disk.
 `cvb doctor` has to check them with no daemon running. The rule that emerged:
 **`core` is mechanism, `hookd` is policy.**
 
-Today `Voz::falar` is synchronous and serialized behind a mutex — with no queue,
-two threads speaking at once would produce overlapping audio. The queue with
-priority, collapsing, and cutting is still to be built.
+`speech::queue` has a worker of its own: the `hookc` on the other side runs in
+series with the AI agent and cannot wait for audio (ADR-0001). Enqueueing is
+immediate; speaking happens later, on another thread.
+
+`Voz::falar` is still mutex-serialized — the queue guarantees one call at a time,
+and the mutex is the safety net for anyone calling from elsewhere (`cvb say`, for
+instance).
 
 ## Level 4 (code)
 

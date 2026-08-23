@@ -47,6 +47,7 @@ boundary:
 | `tool.failed` | A tool failed | medium |
 | `context.compacting` | History is being compacted | low |
 | `message.text` | A chunk of assistant text (continuous narration) | silent by default |
+| `user.returned` | The person submitted a prompt | never spoken — it **cuts off** speech in progress |
 | `error` | A session error, not a tool error | **high** |
 
 Fields on every moment:
@@ -86,6 +87,7 @@ stdin; event name in `PascalCase` in the `hook_event_name` field.
 | `PostToolUseFailure` | `tool.failed` | `tool_name` |
 | `PreToolUse` / `PostToolUse` | `tool.started` / `tool.finished` | `tool_name` |
 | `MessageDisplay` | `message.text` | `message_text` |
+| `UserPromptSubmit` | `user.returned` | — |
 | `PreCompact` | `context.compacting` | — |
 | `SessionStart` / `SessionEnd` | `session.started` / `session.ended` | `session_start_reason` / `session_end_reason` |
 | `PermissionDenied` | `error` | `tool_name` |
@@ -110,7 +112,7 @@ Configured in `~/.codex/hooks.json` (or a `[hooks]` table in
 | `Stop` | `turn.finished` |
 | `SubagentStart` / `SubagentStop` | `subagent.started` / `subagent.finished` |
 | `PreToolUse` / `PostToolUse` | `tool.started` / `tool.finished` |
-| `UserPromptSubmit` | — (used only to cut off speech in progress) |
+| `UserPromptSubmit` | `user.returned` |
 | `PreCompact` / `PostCompact` | `context.compacting` |
 | `SessionStart` / `SessionEnd` | `session.started` / `session.ended` |
 
@@ -143,6 +145,7 @@ Structure: `{ "version": 1, "hooks": { "<event>": [ … ] } }`. Payload in
 | `postToolUseFailure` | `tool.failed` |
 | `errorOccurred` | `error` |
 | `preCompact` | `context.compacting` |
+| `userPromptSubmitted` | `user.returned` |
 | `sessionStart` / `sessionEnd` | `session.started` / `session.ended` |
 
 Copilot has no "text displayed" event. Continuous narration there comes only from

@@ -81,7 +81,7 @@ State per container:
 |---|---|
 | `core` | Moments, protocol, IPC (UNIX only), paths, configuration, audio playback, sidecar client |
 | `hookc` | Working: reads payload, handshakes, dumps, exits |
-| `hookd` | Listens, normalizes, applies the policy, and **speaks**; no priority queue and no listening |
+| `hookd` | Listens, normalizes, applies the policy, queues, and **speaks**; voice input is missing |
 | `cvb` | `doctor`, `daemon status`, `say`, `voices`, `mute`/`unmute` work; the rest exits with an explicit error |
 | `ptywrap` | Declared; exits saying it was not implemented |
 | GUI | Not created — see `gui/README.md` |

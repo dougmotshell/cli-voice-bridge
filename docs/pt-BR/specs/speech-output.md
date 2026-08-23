@@ -17,8 +17,9 @@
 | Cache de frases | **implementado** — indexado por (voz, idioma, texto) |
 | Reprodução e degradação | **implementadas** — `core::audio` ([ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md)) |
 | Política por urgência | **parcial** — `sempre` e `nunca` valem; `ausente` cala, por falta de detecção de presença |
-| Fila, prioridade, colapso, corte | **não existem.** `Voz::falar` é síncrono e serializado por mutex |
+| Fila com prioridade, colapso, expiração e corte | **implementada** — `speech::queue` |
 | Resumo de mensagem longa | **não existe** — hoje só um corte por número de caracteres |
+| Detecção de presença | **não existe** — é o que falta para `ausente` valer |
 
 ## Problema
 
@@ -81,8 +82,15 @@ Uma fila só, com prioridade e um único reprodutor.
   seguidos viram "três ferramentas falharam".
 - Momento que envelheceu mais que a janela de relevância é descartado sem falar
   — anunciar "terminei" 40 segundos depois é pior que silêncio.
-- `UserPromptSubmit` (qualquer CLI) **corta a fala em curso**: se a pessoa está
-  digitando, ela já voltou.
+- `UserPromptSubmit` (qualquer CLI) chega como `user.returned` e **corta tudo**:
+  a fala em curso e o que estiver na fila. Se a pessoa está digitando, já voltou.
+- `cvb mute` também corta na hora, e não só a partir da próxima fala.
+
+**Cortar é matar o processo do reprodutor**, que é o que a escolha do
+[ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md) permite. O
+`Voz` guarda o processo em curso justamente para isso; quem espera pelo fim faz
+isso por sondagem, porque bloquear no processo o seguraria contra quem tenta
+matá-lo.
 
 ## Ponte com o voice-clone
 

@@ -17,8 +17,9 @@ use std::sync::{Arc, Mutex};
 
 use cvb_core::config::{Config, QuandoFalar};
 use cvb_core::ipc::{self, Conexao};
-use cvb_core::{caminhos, Evento, Requisicao, Resposta, VERSAO_PROTOCOLO};
+use cvb_core::{caminhos, Evento, Momento, Requisicao, Resposta, VERSAO_PROTOCOLO};
 
+use speech::queue::{Fila, Item};
 use speech::Voz;
 use state::Estado;
 
@@ -46,6 +47,7 @@ fn main() -> std::process::ExitCode {
         }
     };
     let voz = Arc::new(Voz::nova(&config));
+    let fila = Fila::nova(Arc::clone(&voz), config.geral.segundos_de_relevancia);
     let config = Arc::new(config);
 
     println!("cvb-hookd: escutando em {}", endereco.display());
@@ -77,18 +79,25 @@ fn main() -> std::process::ExitCode {
             Ok(conexao) => {
                 let estado = Arc::clone(&estado);
                 let voz = Arc::clone(&voz);
+                let fila = Arc::clone(&fila);
                 let config = Arc::clone(&config);
                 // Uma thread por conexão. São poucas e de vida curta; um runtime
                 // assíncrono não se paga aqui, e são menos dependências no
                 // caminho que precisa ser confiável.
-                std::thread::spawn(move || atender(conexao, estado, voz, config));
+                std::thread::spawn(move || atender(conexao, estado, voz, fila, config));
             }
             Err(e) => eprintln!("cvb-hookd: conexão recusada: {e}"),
         }
     }
 }
 
-fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>, voz: Arc<Voz>, config: Arc<Config>) {
+fn atender(
+    conexao: Conexao,
+    estado: Arc<Mutex<Estado>>,
+    voz: Arc<Voz>,
+    fila: Arc<Fila>,
+    config: Arc<Config>,
+) {
     let mut leitor = std::io::BufReader::new(conexao);
     let mut linha = String::new();
     let mut apresentado = false;
@@ -160,13 +169,10 @@ fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>, voz: Arc<Voz>, config: 
                         .trim_matches('"'),
                     normalizado.texto
                 );
-                // Falar bloqueia até o áudio acabar. Numa thread própria, para
-                // que o `hookc` do outro lado não espere por isso — ele roda em
-                // série com o agente de IA (ADR-0001).
+                // Enfileirar não bloqueia: o `hookc` do outro lado roda em série
+                // com o agente de IA e não pode esperar pelo áudio (ADR-0001).
                 if !silenciado {
-                    let voz = Arc::clone(&voz);
-                    let config = Arc::clone(&config);
-                    std::thread::spawn(move || anunciar(&normalizado, &voz, &config));
+                    anunciar(&normalizado, &fila, &config);
                 }
             }
 
@@ -175,7 +181,7 @@ fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>, voz: Arc<Voz>, config: 
                 let r = Resposta::Status {
                     versao: env!("CARGO_PKG_VERSION").to_string(),
                     sessoes: e.sessoes(),
-                    fila: 0,
+                    fila: fila.tamanho(),
                     silenciado: e.silenciado(),
                 };
                 let _ = ipc::enviar_linha(leitor.get_mut(), &r);
@@ -186,6 +192,9 @@ fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>, voz: Arc<Voz>, config: 
                     .lock()
                     .expect("estado envenenado")
                     .silenciar(segundos);
+                // Calar tem de valer para o que já está na fila e para o que
+                // está tocando agora, senão `cvb mute` demora a fazer efeito.
+                fila.cortar_tudo();
                 let _ = ipc::enviar_linha(leitor.get_mut(), &Resposta::Ok);
             }
 
@@ -230,10 +239,15 @@ fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>, voz: Arc<Voz>, config: 
     }
 }
 
-/// Decide se o momento vira fala e, se virar, fala.
+/// Decide se o momento vira fala e, se virar, põe na fila.
 ///
 /// A política mora em `docs/pt-BR/specs/speech-output.md`; aqui só se aplica.
-fn anunciar(evento: &Evento, voz: &Voz, config: &Config) {
+fn anunciar(evento: &Evento, fila: &Fila, config: &Config) {
+    // A pessoa voltou a digitar: cala tudo, e não fala nada a respeito disso.
+    if evento.momento == Momento::PessoaVoltou {
+        fila.cortar_tudo();
+        return;
+    }
     if !config.cli_ativo(evento.origem) {
         return;
     }
@@ -250,8 +264,9 @@ fn anunciar(evento: &Evento, voz: &Voz, config: &Config) {
     let Some(frase) = speech::template::frase(evento, config) else {
         return;
     };
-    let saida = voz.falar(&frase);
-    if !saida.falou() {
-        eprintln!("cvb-hookd: não falei \"{frase}\" — {}", saida.descricao());
-    }
+    fila.enfileirar(Item::novo(
+        frase,
+        evento.urgencia(),
+        Some((evento.origem, evento.momento)),
+    ));
 }

@@ -10,11 +10,15 @@
 //!
 //! Fila, prioridade e corte ainda não existem — ver os `TODO:` no fim.
 
+pub mod queue;
 pub mod redact;
 pub mod template;
 
 use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
+use std::process::Child;
+use std::sync::Mutex;
+use std::time::Duration;
 
 use cvb_core::audio::{self as playback, Reprodutor};
 use cvb_core::caminhos;
@@ -22,6 +26,13 @@ use cvb_core::config::Config;
 use cvb_core::sidecar::Sidecar;
 
 use redact::Redator;
+
+/// De quanto em quanto tempo se olha se o reprodutor já terminou.
+///
+/// Não dá para bloquear em `Child::wait`: isso seguraria o processo enquanto
+/// alguém tenta cortá-lo. Vinte milissegundos é imperceptível na fala e
+/// desprezível em CPU.
+const PASSO_DE_ESPERA: Duration = Duration::from_millis(20);
 
 /// Como a fala saiu — ou por que não saiu.
 #[derive(Debug)]
@@ -32,6 +43,8 @@ pub enum Saida {
     VozDoSistema { motivo: String },
     /// Nem uma nem outra.
     Mudo { motivo: String },
+    /// Cortada no meio por algo mais urgente, ou porque a pessoa voltou.
+    Cortada,
 }
 
 impl Saida {
@@ -46,6 +59,7 @@ impl Saida {
             Saida::VozClonada { do_cache: false } => "voz clonada".into(),
             Saida::VozDoSistema { motivo } => format!("voz do sistema — {motivo}"),
             Saida::Mudo { motivo } => format!("mudo — {motivo}"),
+            Saida::Cortada => "cortada".into(),
         }
     }
 }
@@ -54,7 +68,10 @@ pub struct Voz {
     /// Uma fala por vez. A fila com prioridade e corte ainda não existe (ver os
     /// `TODO:` no fim), mas duas threads falando juntas produziriam dois áudios
     /// sobrepostos — que é pior que esperar.
-    falando: std::sync::Mutex<()>,
+    falando: Mutex<()>,
+    /// O processo do reprodutor, enquanto houver um. É por aqui que `cortar`
+    /// alcança a fala em curso.
+    em_curso: Mutex<Option<Child>>,
     redator: Redator,
     sidecar: Sidecar,
     reprodutor: Option<Reprodutor>,
@@ -66,7 +83,8 @@ pub struct Voz {
 impl Voz {
     pub fn nova(config: &Config) -> Voz {
         Voz {
-            falando: std::sync::Mutex::new(()),
+            falando: Mutex::new(()),
+            em_curso: Mutex::new(None),
             redator: Redator::novo(&config.privacidade.redigir),
             sidecar: Sidecar::novo(),
             reprodutor: Reprodutor::descobrir(&config.geral.reprodutor),
@@ -95,16 +113,61 @@ impl Voz {
             };
         }
 
-        let _fila = self.falando.lock().unwrap_or_else(|e| e.into_inner());
+        let _serial = self.falando.lock().unwrap_or_else(|e| e.into_inner());
 
         match self.tentar_voz_clonada(&texto) {
             Ok(saida) => saida,
-            Err(motivo) => match playback::falar_com_voz_do_sistema(&texto) {
-                Ok(()) => Saida::VozDoSistema { motivo },
+            Err(motivo) => match playback::iniciar_voz_do_sistema(&texto) {
+                Ok(filho) => {
+                    if self.acompanhar(filho) {
+                        Saida::VozDoSistema { motivo }
+                    } else {
+                        Saida::Cortada
+                    }
+                }
                 Err(e) => Saida::Mudo {
                     motivo: format!("{motivo}; e a voz do sistema também falhou: {e}"),
                 },
             },
+        }
+    }
+
+    /// Interrompe a fala em curso, se houver.
+    ///
+    /// Matar o processo é o que a escolha do ADR-0009 permite — mais grosseiro
+    /// que parar um fluxo de áudio, e o preço está escrito lá.
+    pub fn cortar(&self) {
+        let mut guarda = self.em_curso.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(filho) = guarda.as_mut() {
+            let _ = filho.kill();
+            let _ = filho.wait();
+        }
+        *guarda = None;
+    }
+
+    /// Espera o reprodutor terminar. `false` quando foi cortado no meio.
+    fn acompanhar(&self, filho: Child) -> bool {
+        *self.em_curso.lock().unwrap_or_else(|e| e.into_inner()) = Some(filho);
+        loop {
+            {
+                let mut guarda = self.em_curso.lock().unwrap_or_else(|e| e.into_inner());
+                match guarda.as_mut() {
+                    // Sumiu enquanto esperávamos: `cortar` levou.
+                    None => return false,
+                    Some(filho) => match filho.try_wait() {
+                        Ok(Some(_)) => {
+                            *guarda = None;
+                            return true;
+                        }
+                        Ok(None) => {}
+                        Err(_) => {
+                            *guarda = None;
+                            return true;
+                        }
+                    },
+                }
+            }
+            std::thread::sleep(PASSO_DE_ESPERA);
         }
     }
 
@@ -138,8 +201,12 @@ impl Voz {
             }
         }
 
-        reprodutor.tocar(&arquivo)?;
-        Ok(Saida::VozClonada { do_cache })
+        let filho = reprodutor.iniciar(&arquivo)?;
+        if self.acompanhar(filho) {
+            Ok(Saida::VozClonada { do_cache })
+        } else {
+            Ok(Saida::Cortada)
+        }
     }
 
     /// Chave de cache: (voz, idioma, texto). Hash não criptográfico de
@@ -152,14 +219,6 @@ impl Voz {
         self.dir_cache.join(format!("{:016x}.wav", h.finish()))
     }
 }
-
-// TODO: falta a fila de `docs/pt-BR/specs/speech-output.md` — prioridade por
-// urgência, colapso de momentos repetidos, expiração do que envelheceu e corte
-// da fala em curso. Hoje `falar` é síncrono e serial: quem chamar duas vezes
-// espera duas vezes.
-//
-// TODO: o corte, quando existir, mata o processo do reprodutor — é o que a
-// escolha do ADR-0009 permite. Se soar ruim, é sinal de revisitar aquele ADR.
 
 #[cfg(test)]
 mod testes {

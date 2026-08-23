@@ -44,6 +44,7 @@ const EVENTOS_CLAUDE: &[(&str, Option<&str>)] = &[
     ("SubagentStop", None),
     ("TaskCompleted", None),
     ("PostToolUseFailure", None),
+    ("UserPromptSubmit", None),
     ("SessionStart", None),
     ("SessionEnd", None),
 ];
@@ -67,6 +68,7 @@ const EVENTOS_COPILOT: &[(&str, Option<&str>)] = &[
     ("postToolUseFailure", None),
     ("errorOccurred", None),
     ("preToolUse", Some("ask_user")),
+    ("userPromptSubmitted", None),
     ("sessionStart", None),
     ("sessionEnd", None),
 ];

@@ -77,7 +77,7 @@ Estado por contêiner:
 |---|---|
 | `core` | momentos, protocolo, IPC (só UNIX), caminhos, configuração, reprodução de áudio, cliente do sidecar |
 | `hookc` | funcional: lê payload, faz handshake, despeja e sai |
-| `hookd` | escuta, normaliza, aplica a política e **fala**; sem fila de prioridade nem escuta |
+| `hookd` | escuta, normaliza, aplica a política, enfileira e **fala**; falta a entrada por voz |
 | `cvb` | `doctor`, `daemon status`, `say`, `voices`, `mute`/`unmute` de pé; o resto sai com erro explícito |
 | `ptywrap` | declarado, sai com erro dizendo que não foi implementado |
 | GUI | não criada — ver `gui/README.md` |

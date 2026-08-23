@@ -65,9 +65,7 @@ pub fn mapear(evento: &str, p: &Value) -> (Momento, String) {
             primeiro_texto(p, &["tool_name"]).unwrap_or_default(),
         ),
 
-        // Serve para cortar a fala em curso: se a pessoa está digitando, ela já
-        // voltou (`docs/pt-BR/specs/speech-output.md`). Não é para ser falado.
-        "UserPromptSubmit" => (Momento::TextoDeMensagem, String::new()),
+        "UserPromptSubmit" => (Momento::PessoaVoltou, String::new()),
 
         "PreCompact" | "PostCompact" => (Momento::ContextoCompactando, String::new()),
 

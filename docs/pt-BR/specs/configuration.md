@@ -42,9 +42,10 @@ TOML. Mesmo formato do `config.toml` do Codex, legível e diffável.
 
 ```toml
 [geral]
-voz = "douglas"           # nome cadastrado no voice-clone
+voz = "douglas"                 # nome cadastrado no voice-clone
 idioma = "pt-BR"
 perfil = "padrao"
+segundos_de_relevancia = 30     # mais velho que isto não é falado; crítico não expira
 
 [voice_clone]
 raiz = "~/www/voice-clone"      # nunca embutido no código

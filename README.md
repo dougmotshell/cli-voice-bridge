@@ -8,10 +8,10 @@ Roda em Linux, macOS e Windows, em qualquer terminal, inclusive os integrados do
 VS Code e do IntelliJ. Tudo local: nenhum áudio, transcrição ou texto de trabalho
 sai da máquina. Projeto pessoal, sem uso comercial.
 
-> **Estado: já fala, e se instala sozinho.** Compila sem avisos, 53 testes
-> passam, o caminho evento → momento → voz foi exercitado ponta a ponta com
-> payloads reais dos três CLIs, e `cvb install` liga os hooks sem apagar os
-> alheios. Faltam a fila de prioridade e a entrada por voz.
+> **Estado: já fala, com fila, e se instala sozinho.** Compila sem avisos, 61
+> testes passam, o caminho evento → momento → fila → voz foi exercitado ponta a
+> ponta com payloads reais dos três CLIs, e `cvb install` liga os hooks sem
+> apagar os alheios. Falta a entrada por voz.
 
 ## Documentação
 
@@ -102,5 +102,5 @@ outros hooks, eles continuam funcionando.
 
 ## Próximo passo
 
-A fila de fala — prioridade por urgência, colapso de repetidos e corte da fala em
-curso. Ver `docs/pt-BR/specs/speech-output.md`.
+A entrada por voz: responder "sim" a um pedido de permissão sem tocar no teclado.
+Ver `docs/pt-BR/specs/speech-input.md`.

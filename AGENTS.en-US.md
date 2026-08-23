@@ -12,9 +12,10 @@ Codex CLI, Copilot CLI). It speaks aloud the moments when the agent tries to
 interact — permission request, task finished, subagent started, pending question
 — and accepts the answer by voice. Personal use, non-commercial.
 
-**State: it speaks, and installs itself.** The event → moment → voice path is up
-and tested end to end, and `cvb install` wires the hooks into all three CLIs
-without erasing anyone else's. Still missing: the priority queue and voice input.
+**State: it speaks, with a queue, and installs itself.** The
+event → moment → queue → voice path is up and tested end to end, and
+`cvb install` wires the hooks into all three CLIs without erasing anyone else's.
+Still missing: voice input.
 
 ## Stack
 

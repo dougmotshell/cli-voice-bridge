@@ -21,8 +21,9 @@ noise.
 | Phrase cache | **implemented** — keyed by (voice, language, text) |
 | Playback and degradation | **implemented** — `core::audio` ([ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md)) |
 | Policy by urgency | **partial** — `sempre` and `nunca` hold; `ausente` stays silent, for lack of presence detection |
-| Queue, priority, collapsing, cutting | **do not exist.** `Voz::falar` is synchronous and mutex-serialized |
+| Queue with priority, collapsing, expiry, and cutting | **implemented** — `speech::queue` |
 | Summary of a long message | **does not exist** — today just a character-count cut |
+| Presence detection | **does not exist** — it is what `ausente` is waiting on |
 
 ## Problem
 
@@ -86,8 +87,16 @@ A single queue, with priority and one player.
   `tool.failed` become "three tools failed".
 - A moment older than the relevance window is discarded without speaking —
   announcing "I'm done" 40 seconds late is worse than silence.
-- `UserPromptSubmit` (any CLI) **cuts off speech in progress**: if the person is
-  typing, they are already back.
+- `UserPromptSubmit` (any CLI) arrives as `user.returned` and **cuts everything**:
+  the utterance in progress and whatever is queued. If the person is typing, they
+  are already back.
+- `cvb mute` also cuts immediately, not just from the next utterance on.
+
+**Cutting means killing the player process**, which is what the
+[ADR-0009](../decisions/0009-reproducao-por-reprodutor-do-sistema.md) choice
+allows. `Voz` keeps the running process precisely for that; whoever waits for the
+end does so by polling, because blocking on the process would hold it against
+whoever is trying to kill it.
 
 ## Bridge to voice-clone
 

@@ -45,9 +45,10 @@ TOML. The same format as Codex's `config.toml`, readable and diffable.
 
 ```toml
 [geral]
-voz = "douglas"           # a voice registered in voice-clone
+voz = "douglas"                 # a voice registered in voice-clone
 idioma = "pt-BR"
 perfil = "padrao"
+segundos_de_relevancia = 30     # older than this is not spoken; critical never expires
 
 [voice_clone]
 raiz = "~/www/voice-clone"      # never embedded in code

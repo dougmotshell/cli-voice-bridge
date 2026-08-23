@@ -9,9 +9,9 @@ Codex CLI, Copilot CLI). Fala em voz alta os momentos em que o agente tenta
 interagir — pedido de permissão, tarefa concluída, subagente iniciado, pergunta
 pendente — e aceita a resposta por voz. Uso pessoal, sem fim comercial.
 
-**Estado: fala, e se instala sozinho.** O caminho evento → momento → voz está de
-pé e testado ponta a ponta, e `cvb install` liga os hooks nos três CLIs sem
-apagar os alheios. Faltam a fila de prioridade e a entrada por voz.
+**Estado: fala, com fila, e se instala sozinho.** O caminho
+evento → momento → fila → voz está de pé e testado ponta a ponta, e `cvb install`
+liga os hooks nos três CLIs sem apagar os alheios. Falta a entrada por voz.
 
 ## Stack
 

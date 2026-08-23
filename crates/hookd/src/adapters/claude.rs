@@ -91,6 +91,8 @@ pub fn mapear(evento: &str, p: &Value) -> (Momento, String) {
             primeiro_texto(p, &["tool_name"]).unwrap_or_default(),
         ),
 
+        "UserPromptSubmit" => (Momento::PessoaVoltou, String::new()),
+
         "MessageDisplay" => (
             Momento::TextoDeMensagem,
             primeiro_texto(p, &["message_text"]).unwrap_or_default(),

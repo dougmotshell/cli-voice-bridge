@@ -44,6 +44,7 @@ O vocabulário que o resto do sistema usa. Nada além disto atravessa a fronteir
 | `tool.failed` | Uma ferramenta falhou | média |
 | `context.compacting` | O histórico está sendo compactado | baixa |
 | `message.text` | Trecho de texto do assistente (narração contínua) | silenciosa por padrão |
+| `user.returned` | A pessoa submeteu um prompt | nunca é falado — **cala** a fala em curso |
 | `error` | Erro de sessão, não de ferramenta | **alta** |
 
 Campos de todo momento:
@@ -83,6 +84,7 @@ nome do evento em `PascalCase` no campo `hook_event_name`.
 | `PostToolUseFailure` | `tool.failed` | `tool_name` |
 | `PreToolUse` / `PostToolUse` | `tool.started` / `tool.finished` | `tool_name` |
 | `MessageDisplay` | `message.text` | `message_text` |
+| `UserPromptSubmit` | `user.returned` | — |
 | `PreCompact` | `context.compacting` | — |
 | `SessionStart` / `SessionEnd` | `session.started` / `session.ended` | `session_start_reason` / `session_end_reason` |
 | `PermissionDenied` | `error` | `tool_name` |
@@ -107,7 +109,7 @@ Configuração em `~/.codex/hooks.json` ou na tabela `[hooks]` do
 | `Stop` | `turn.finished` |
 | `SubagentStart` / `SubagentStop` | `subagent.started` / `subagent.finished` |
 | `PreToolUse` / `PostToolUse` | `tool.started` / `tool.finished` |
-| `UserPromptSubmit` | — (usado só para cortar a fala em curso) |
+| `UserPromptSubmit` | `user.returned` |
 | `PreCompact` / `PostCompact` | `context.compacting` |
 | `SessionStart` / `SessionEnd` | `session.started` / `session.ended` |
 
@@ -140,6 +142,7 @@ Payload em `camelCase`. Os nomes de evento aceitam duas grafias.
 | `postToolUseFailure` | `tool.failed` |
 | `errorOccurred` | `error` |
 | `preCompact` | `context.compacting` |
+| `userPromptSubmitted` | `user.returned` |
 | `sessionStart` / `sessionEnd` | `session.started` / `session.ended` |
 
 O Copilot não tem evento de "texto exibido". Narração contínua nele só sai por
