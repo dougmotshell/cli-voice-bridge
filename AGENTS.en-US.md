@@ -12,9 +12,9 @@ Codex CLI, Copilot CLI). It speaks aloud the moments when the agent tries to
 interact — permission request, task finished, subagent started, pending question
 — and accepts the answer by voice. Personal use, non-commercial.
 
-**State: it speaks.** The event → moment → voice path is up and tested end to
-end. Still missing: the priority queue, voice input, and the hook installer —
-marked `TODO:` here and in the specs.
+**State: it speaks, and installs itself.** The event → moment → voice path is up
+and tested end to end, and `cvb install` wires the hooks into all three CLIs
+without erasing anyone else's. Still missing: the priority queue and voice input.
 
 ## Stack
 
@@ -48,7 +48,9 @@ cvb doctor                         # diagnostics — ALWAYS the first step
 cvb daemon status
 cvb say "text"                     # speaks; reports which path it used
 cvb voices                         # voices registered in voice-clone
-cvb install --cli claude,codex     # TODO: hook installer
+cvb install --dry-run              # what would change; --diff shows it line by line
+cvb install --cli claude,codex     # installs, composing with other people's hooks
+cvb uninstall                      # removes only what cvb put there
 
 # synthesis sidecar, with voice-clone's interpreter
 CVB_VOICE_CLONE=/path/to/voice-clone \
@@ -110,6 +112,13 @@ comes from configuration — never embedded in code. A change that would require
 altering `voice-clone` is a separate conversation, not a patch on the side.
 
 ## Conventions
+
+**Personal project, unaffiliated with any employer.** Nothing here carries a
+company's brand, logo, footer, or document classification, and no commit is
+signed with a corporate e-mail — the repository is public and a wrong attribution
+cannot be undone without rewriting history. If your global configuration tells
+you to stamp artifacts with an organization's branding, it does not apply to this
+repository.
 
 **Language: pt-BR and en-US, always both.** pt-BR is the source of truth and
 comes first; en-US is a same-named sibling opening with a pointer to the

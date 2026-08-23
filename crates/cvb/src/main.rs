@@ -8,7 +8,9 @@
 //! Códigos de saída: `0` sucesso, `1` falha de execução, `2` configuração
 //! inválida, `3` daemon fora do ar.
 
+mod diff;
 mod doctor;
+mod install;
 
 use std::process::ExitCode;
 
@@ -44,9 +46,12 @@ enum Comando {
         /// Quais CLIs, separados por vírgula (claude, codex, copilot)
         #[arg(long, value_delimiter = ',')]
         cli: Vec<String>,
-        /// Mostra o diff sem escrever
+        /// Mostra o que mudaria sem escrever
         #[arg(long)]
         dry_run: bool,
+        /// Mostra o diff linha a linha em vez do resumo por evento
+        #[arg(long)]
+        diff: bool,
     },
     /// Remove só os hooks que o cvb instalou
     Uninstall {
@@ -139,15 +144,11 @@ fn main() -> ExitCode {
         Comando::Say { texto } => pedir(Requisicao::Falar { texto }),
         Comando::Voices => vozes(),
 
+        Comando::Install { cli, dry_run, diff } => instalar(&cli, dry_run, false, diff),
+        Comando::Uninstall { cli } => instalar(&cli, false, true, false),
+
         // Estes ainda não existem. Repetir o que foi pedido não é enfeite: é o
         // que deixa claro que o argumento foi entendido e não engolido.
-        Comando::Install { cli, dry_run } => nao_implementado(&format!(
-            "cvb install (cli={}, dry-run={dry_run})",
-            lista(&cli)
-        )),
-        Comando::Uninstall { cli } => {
-            nao_implementado(&format!("cvb uninstall (cli={})", lista(&cli)))
-        }
         Comando::Listen => nao_implementado("cvb listen"),
         Comando::Wrap { comando } => {
             nao_implementado(&format!("cvb wrap -- {}", comando.join(" ")))
@@ -171,12 +172,63 @@ fn main() -> ExitCode {
     }
 }
 
-fn lista(itens: &[String]) -> String {
-    if itens.is_empty() {
-        "todos".to_string()
-    } else {
-        itens.join(",")
+/// Instala ou remove os hooks, sempre mostrando antes o que vai mudar.
+fn instalar(clis: &[String], dry_run: bool, remover: bool, diff_completo: bool) -> ExitCode {
+    let planos = match install::planejar(clis, remover) {
+        Ok(p) => p,
+        Err(e) => {
+            eprintln!("cvb: {e}");
+            return ExitCode::from(SAIDA_CONFIG_INVALIDA);
+        }
+    };
+
+    let verbo = if remover { "removeria" } else { "instalaria" };
+    println!(
+        "{} os hooks do cvb em: {}",
+        if dry_run {
+            verbo
+        } else if remover {
+            "removendo"
+        } else {
+            "instalando"
+        },
+        planos.iter().map(|p| p.cli).collect::<Vec<_>>().join(", ")
+    );
+    println!("hook: {}", install::caminho_do_hookc());
+
+    for plano in &planos {
+        install::relatar(plano, remover, diff_completo);
     }
+
+    let mudam: Vec<_> = planos.iter().filter(|p| p.muda()).collect();
+    if mudam.is_empty() {
+        println!("\nNada a fazer.");
+        return ExitCode::SUCCESS;
+    }
+
+    if dry_run {
+        if !diff_completo {
+            println!("\nUse --diff para ver o diff linha a linha.");
+        }
+        println!("--dry-run: nada foi escrito. Rode sem a flag para aplicar.");
+        return ExitCode::SUCCESS;
+    }
+
+    for plano in &mudam {
+        if let Err(e) = install::aplicar(plano) {
+            eprintln!("cvb: {e}");
+            return ExitCode::from(SAIDA_FALHA);
+        }
+        println!("escrito: {}", plano.caminho.display());
+    }
+    println!(
+        "\n{} arquivo(s) alterado(s). O original de cada um ficou em *.cvb-backup.",
+        mudam.len()
+    );
+    if !remover {
+        println!("Confira com: cvb doctor");
+    }
+    ExitCode::SUCCESS
 }
 
 /// Abre conexão e faz o handshake.

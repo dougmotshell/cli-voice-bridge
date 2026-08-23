@@ -26,7 +26,7 @@ promessa.
 | Comando | Faz |
 |---|---|
 | `cvb doctor` | Diagnóstico completo. Primeiro passo de qualquer investigação |
-| `cvb install [--cli …] [--dry-run]` | Instala/atualiza hooks, compondo com os existentes |
+| `cvb install [--cli …] [--dry-run] [--diff]` | Instala/atualiza hooks, compondo com os existentes. `--dry-run` resume por evento; `--diff` mostra linha a linha |
 | `cvb uninstall [--cli …]` | Remove só o que instalou |
 | `cvb daemon [start\|stop\|status\|logs]` | Ciclo de vida do `hookd` |
 | `cvb say <texto>` | Testa a saída de voz fim a fim; diz por qual caminho falou |

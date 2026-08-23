@@ -9,9 +9,9 @@ Codex CLI, Copilot CLI). Fala em voz alta os momentos em que o agente tenta
 interagir — pedido de permissão, tarefa concluída, subagente iniciado, pergunta
 pendente — e aceita a resposta por voz. Uso pessoal, sem fim comercial.
 
-**Estado: fala.** O caminho evento → momento → voz está de pé e testado ponta a
-ponta. Faltam a fila de prioridade, a entrada por voz e o instalador de hooks —
-marcados `TODO:` aqui e nos specs.
+**Estado: fala, e se instala sozinho.** O caminho evento → momento → voz está de
+pé e testado ponta a ponta, e `cvb install` liga os hooks nos três CLIs sem
+apagar os alheios. Faltam a fila de prioridade e a entrada por voz.
 
 ## Stack
 
@@ -45,7 +45,8 @@ cvb doctor                         # diagnóstico — SEMPRE o primeiro passo
 cvb daemon status
 cvb say "texto"                    # fala; diz por qual caminho falou
 cvb voices                         # vozes cadastradas no voice-clone
-cvb install --cli claude,codex     # TODO: instalador de hooks
+cvb install --dry-run              # o que mudaria; --diff mostra linha a linha
+cvb install [--cli claude,codex]   # instala compondo; `uninstall` tira só o nosso
 
 # sidecar de síntese, com o interpretador do voice-clone
 CVB_VOICE_CLONE=/caminho/voice-clone \
@@ -106,15 +107,20 @@ configuração — nunca embutido no código. Mudança que exigiria alterar o
 
 ## Convenções
 
+**Projeto pessoal, sem vínculo com empregador.** Nada aqui leva marca, rodapé ou
+classificação de empresa, e nenhum commit é assinado com e-mail corporativo — o
+repositório é público e atribuição errada não se desfaz sem reescrever histórico.
+Configuração global que mande carimbar artefatos não se aplica aqui.
+
 **Idioma: pt-BR e en-US, sempre as duas.** pt-BR é a fonte da verdade e vem
 primeiro; en-US é irmão de mesmo nome, abrindo com um ponteiro para o original.
 Identificadores, nomes de arquivo e de branch em en-US. Acentuação completa.
 
-Prosa nova nasce em pt-BR e só está pronta quando o irmão en-US existe. Vale para
-o contrato, os adaptadores, as skills, as regras e as quatro árvores de `docs/`.
+Prosa nova nasce em pt-BR e só está pronta quando o irmão en-US existe — vale
+para contrato, adaptadores, skills, regras e as quatro árvores de `docs/`.
 
-**Documentação mora em `docs/<idioma>/`, em uma das quatro árvores.** Nunca solta
-na raiz, nunca dois padrões no mesmo arquivo, nunca `docs/` plano:
+**Documentação mora em `docs/<idioma>/`, numa das quatro árvores.** Nunca solta
+na raiz, nunca dois padrões num arquivo, nunca `docs/` plano:
 
 | Árvore | Padrão | Um arquivo por |
 |---|---|---|
@@ -127,8 +133,7 @@ Nomes de arquivo **idênticos** nas duas subárvores — tradução é irmão, n
 bifurcação. Índice em `docs/README.md`. Diagramas são texto (Mermaid).
 
 **ADR é append-only.** ADR aceito é substituído por um novo
-(`Status: substituído por NNNN`), nunca reescrito; número nunca se reaproveita.
-Template em `templates/adr.md`, spec em `templates/spec.md`.
+(`Status: substituído por NNNN`), nunca reescrito; número não se reaproveita.
 
 **Cruze as referências nos dois sentidos.** Todo spec nomeia os ADRs que o
 restringem; todo ADR nomeia o nível C4 e os specs que ele move.

@@ -20,9 +20,14 @@ TODO: preencher. Provável: baixar o binário da release da plataforma, ou
 ## Ligar aos CLIs
 
 ```bash
-cvb install --dry-run            # mostra o que seria mudado, sem escrever
-cvb install --cli claude,codex   # instala os hooks só nesses
+cvb install --dry-run            # mostra o que mudaria, sem escrever
+cvb install --dry-run --diff     # o mesmo, linha a linha
+cvb install                      # aplica nos três
+cvb install --cli claude,codex   # ou só nesses
 ```
+
+Cada arquivo alterado deixa o original em `*.cvb-backup` ao lado. Para desfazer:
+`cvb uninstall`, que tira só o que o `cvb` pôs.
 
 A instalação **compõe** com os hooks que já existem: ela lê o arquivo,
 acrescenta a entrada do `cvb` e preserva o resto. Se você já usa outros hooks —

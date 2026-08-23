@@ -29,7 +29,7 @@ promise.
 | Command | Does |
 |---|---|
 | `cvb doctor` | Full diagnostics. The first step of any investigation |
-| `cvb install [--cli …] [--dry-run]` | Installs/updates hooks, composing with existing ones |
+| `cvb install [--cli …] [--dry-run] [--diff]` | Installs/updates hooks, composing with existing ones. `--dry-run` summarizes by event; `--diff` shows it line by line |
 | `cvb uninstall [--cli …]` | Removes only what it installed |
 | `cvb daemon [start\|stop\|status\|logs]` | `hookd` lifecycle |
 | `cvb say <text>` | End-to-end test of speech output; reports which path it spoke through |

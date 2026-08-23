@@ -52,16 +52,53 @@ Instalado por `cvb install`. Um comando por evento apontando para o `hookc`.
 
 **Composição, não substituição.** Esta máquina já tem `rtk hook claude` em
 `PreToolUse` no Claude e no Codex. `cvb install` lê o arquivo, acrescenta a
-entrada do `cvb` e preserva o resto; `cvb install --dry-run` mostra o diff antes.
-Desinstalar remove só o que instalou. TODO: definir como marcar as entradas do
-`cvb` para reconhecê-las depois — provavelmente um comentário não é possível em
-JSON, então um caminho de binário distintivo.
+entrada do `cvb` e preserva o resto; `cvb install --dry-run` mostra o que mudaria
+e `--diff` mostra linha a linha. Desinstalar remove só o que instalou, e o
+original de cada arquivo fica em `*.cvb-backup`.
+
+**Como uma entrada é reconhecida como nossa:** o comando dela menciona o binário
+`cvb-hook`. JSON não tem comentário, então não há como carimbar de outro jeito —
+e é isto que `cvb uninstall` usa. Reinstalar remove a entrada anterior antes de
+pôr a nova, para nunca duplicar.
+
+**Ordem das chaves preservada.** O `serde_json` roda com `preserve_order`; sem
+isso, regravar o `settings.json` embaralharia a configuração de quem já estava
+lá. O conteúdo é preservado, mas a formatação é normalizada — daí o backup.
+
+**O Copilot não precisa de composição.** `~/.copilot/hooks/` é um diretório de
+arquivos JSON, então o `cvb` escreve o seu próprio (`cli-voice-bridge.json`) e
+nunca encosta em arquivo de terceiro. Instalar é escrever; desinstalar é apagar.
+
+### Quais eventos são assinados
+
+| CLI | Eventos |
+|---|---|
+| Claude | `PermissionRequest`, `Notification` (matcher `permission_prompt\|idle_prompt`), `Elicitation`, `Stop`, `StopFailure`, `SubagentStart`, `SubagentStop`, `TaskCompleted`, `PostToolUseFailure`, `SessionStart`, `SessionEnd` |
+| Codex | `PermissionRequest`, `Stop`, `SubagentStart`, `SubagentStop`, `UserPromptSubmit`, `SessionStart`, `SessionEnd` |
+| Copilot | `permissionRequest`, `notification`, `agentStop`, `subagentStart`, `subagentStop`, `postToolUseFailure`, `errorOccurred`, `preToolUse` (matcher `ask_user`), `sessionStart`, `sessionEnd` |
+
+**`PreToolUse` e `PostToolUse` ficam de fora no Claude e no Codex, de propósito.**
+São momentos silenciosos por padrão, e `PreToolUse` é o caminho quente onde o
+`rtk` já mora — assinar os dois custaria em toda chamada de ferramenta para não
+falar nada. Quem quiser narração liga na configuração e acrescenta o hook à mão.
+
+No Copilot, `preToolUse` entra **com matcher `ask_user`**, porque é assim que
+aquele agente faz pergunta: sem isso, o momento em que a pessoa é necessária
+passaria despercebido.
 
 ### notify — complementar, só Codex
 
 `notify = ["<caminho do hookc>", "--origem", "codex", "--transporte", "notify"]`
-no `config.toml`. O Codex acrescenta o JSON como argumento final. Redundante com
-o hook `Stop`; serve de rede de segurança e some na deduplicação.
+no `config.toml`. O Codex acrescenta o JSON como argumento final. O `hookc` já
+aceita essa forma (payload no argumento em vez do stdin).
+
+**O `cvb install` não mexe nisso.** Editar o `config.toml` do Codex exigiria um
+editor de TOML que preserve formatação e comentários — o arquivo tem dezenas de
+entradas de projeto, servidores MCP e estado de hook, e regravá-lo com um
+serializador comum apagaria a formatação de quem escreveu. Como o `notify` é
+redundante com o hook `Stop`, o custo não se paga por ora.
+
+TODO: se entrar, é com `toml_edit`, e com o mesmo `--dry-run` do resto.
 
 ### stream-json — modo não interativo
 

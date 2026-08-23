@@ -8,10 +8,10 @@ Roda em Linux, macOS e Windows, em qualquer terminal, inclusive os integrados do
 VS Code e do IntelliJ. Tudo local: nenhum áudio, transcrição ou texto de trabalho
 sai da máquina. Projeto pessoal, sem uso comercial.
 
-> **Estado: já fala.** Compila sem avisos, 42 testes passam, e o caminho
-> evento → momento → voz foi exercitado ponta a ponta com payloads reais dos três
-> CLIs. Faltam a fila de prioridade, a entrada por voz e o instalador de hooks —
-> tudo marcado `TODO:` nos documentos.
+> **Estado: já fala, e se instala sozinho.** Compila sem avisos, 53 testes
+> passam, o caminho evento → momento → voz foi exercitado ponta a ponta com
+> payloads reais dos três CLIs, e `cvb install` liga os hooks sem apagar os
+> alheios. Faltam a fila de prioridade e a entrada por voz.
 
 ## Documentação
 
@@ -88,7 +88,19 @@ CVB_VOICE_CLONE=~/www/voice-clone \
   ~/www/voice-clone/.venv/bin/python sidecar/servidor.py
 ```
 
+## Ligar aos seus CLIs
+
+```bash
+cvb install --dry-run     # mostra o que mudaria; --diff para o diff completo
+cvb install               # aplica
+cvb uninstall             # tira só o que o cvb pôs
+```
+
+Ele **compõe** com os hooks que já existem: lê o arquivo, acrescenta as entradas
+do `cvb`, preserva o resto, e guarda o original em `*.cvb-backup`. Se você já usa
+outros hooks, eles continuam funcionando.
+
 ## Próximo passo
 
-O instalador de hooks (`cvb install`), para dispensar configurar hook à mão. Ver
-`AGENTS.md`, seção *Comandos*.
+A fila de fala — prioridade por urgência, colapso de repetidos e corte da fala em
+curso. Ver `docs/pt-BR/specs/speech-output.md`.

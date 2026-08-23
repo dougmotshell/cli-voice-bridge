@@ -30,10 +30,13 @@ TODO: prebuilt binaries. See [portability](../specs/portability.md), the
 
 ```bash
 cvb install --dry-run            # shows what would change, without writing
-cvb install --cli claude,codex   # installs hooks only for those
+cvb install --dry-run --diff     # the same, line by line
+cvb install                      # applies to all three
+cvb install --cli claude,codex   # or only to those
 ```
 
-TODO: `cvb install` is not implemented yet.
+Every file it changes leaves its original as `*.cvb-backup` alongside. To undo:
+`cvb uninstall`, which removes only what `cvb` put there.
 
 Installation **composes** with hooks that already exist: it reads the file,
 appends the `cvb` entry, and preserves the rest. If you already use other hooks —
