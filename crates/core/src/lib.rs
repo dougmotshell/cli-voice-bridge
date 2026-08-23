@@ -8,9 +8,11 @@
 //! quarto CLI sem tocar aqui. Ver ADR-0007.
 
 pub mod caminhos;
+pub mod config;
 pub mod ipc;
 pub mod momento;
 pub mod protocolo;
 
+pub use config::Config;
 pub use momento::{Evento, Momento, Origem, Transporte, Urgencia};
 pub use protocolo::{Requisicao, Resposta, VERSAO_PROTOCOLO};

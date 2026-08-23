@@ -20,6 +20,7 @@ cvb-core = { path = "crates/core" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 clap = { version = "4", features = ["derive"] }
+toml = "0.8"
 
 # O perfil de release importa aqui: o `hookc` roda em série com o agente de IA,
 # centenas de vezes por sessão (ADR-0001). Binário menor abre mais rápido.
