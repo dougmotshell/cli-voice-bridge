@@ -27,16 +27,16 @@
 //!
 //! TODO: a estratégia de reconstrução da tela lógica. Hipótese de trabalho:
 //! um interpretador de sequências ANSI mantendo uma tela virtual, com regras
-//! por CLI. Ver `docs/specs/capture-transports.md`, seção *pty*.
+//! por CLI. Ver `docs/pt-BR/specs/capture-transports.md`, seção *pty*.
 //!
 //! TODO: `openpty` no Linux e no macOS, ConPTY no Windows
-//! (`docs/specs/portability.md`).
+//! (`docs/pt-BR/specs/portability.md`).
 
 fn main() -> std::process::ExitCode {
     eprintln!("cvb-ptywrap: ainda não implementado.");
-    eprintln!("  O contrato está em docs/specs/capture-transports.md (seção pty)");
+    eprintln!("  O contrato está em docs/pt-BR/specs/capture-transports.md (seção pty)");
     eprintln!(
-        "  e as restrições em docs/decisions/0005-wrapper-pty-como-transporte-complementar.md."
+        "  e as restrições em docs/pt-BR/decisions/0005-wrapper-pty-como-transporte-complementar.md."
     );
     eprintln!();
     eprintln!("  Enquanto isso, os hooks funcionam sozinhos: eles são o transporte");

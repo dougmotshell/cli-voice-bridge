@@ -1,7 +1,7 @@
 //! Estado vivo do daemon: sessões conhecidas e silenciamento.
 //!
 //! Deliberadamente pequeno. Fila de fala, log com retenção e métricas para a
-//! GUI ainda não existem — ver `docs/architecture/03-component.md`.
+//! GUI ainda não existem — ver `docs/pt-BR/architecture/03-component.md`.
 
 use std::collections::HashSet;
 use std::time::{Duration, Instant};

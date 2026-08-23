@@ -1,7 +1,7 @@
 <!-- managed-by:cli-voice-bridge/sync-ai-surfaces — do not edit by hand -->
 ---
 name: new-spec
-description: Cria um novo spec de capacidade em docs/specs/ no formato SDD, com escopo, requisitos, design, alternativas, plano de teste e questões em aberto. Use ao desenhar uma capacidade nova do cli-voice-bridge.
+description: Cria um novo spec de capacidade em docs/pt-BR/specs/ no formato SDD, com escopo, requisitos, design, alternativas, plano de teste e questões em aberto. Use ao desenhar uma capacidade nova do cli-voice-bridge.
 agent: agent
 ---
 <!-- fonte: skills/new-spec/SKILL.md -->
@@ -14,7 +14,7 @@ provavelmente não é um spec: é detalhe de implementação.
 
 ## Passos
 
-1. **Copie `templates/spec.md`** para `docs/specs/<nome-em-kebab>.md`. Nome em
+1. **Copie `templates/spec.md`** para `docs/pt-BR/specs/<nome-em-kebab>.md`. Nome em
    en-US, como os existentes (`speech-output`, `event-normalization`).
 
 2. **Comece pelo problema**, não pela solução. Uma capacidade cujo problema você

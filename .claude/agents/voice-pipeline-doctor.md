@@ -34,8 +34,8 @@ Se o defeito for de lá, diga qual é e pare — a correção é uma conversa se
 com ADR no repositório de lá.
 
 Não sugere trocar para TTS ou STT de nuvem: é vedado por
-[ADR-0003](../../docs/decisions/0003-tts-delegado-ao-voice-clone.md) e
-[ADR-0006](../../docs/decisions/0006-stt-offline-na-maquina.md), e o motivo é o
+[ADR-0003](../../docs/pt-BR/decisions/0003-tts-delegado-ao-voice-clone.md) e
+[ADR-0006](../../docs/pt-BR/decisions/0006-stt-offline-na-maquina.md), e o motivo é o
 requisito central do projeto.
 
 ## Ao relatar

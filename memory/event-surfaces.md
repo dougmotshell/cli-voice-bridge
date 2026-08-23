@@ -1,7 +1,7 @@
 # Superfícies de eventos dos CLIs de IA
 
 Verificado em **2026-08-23**, nesta máquina. O mapa detalhado está em
-`docs/specs/event-normalization.md`; aqui fica só o que é fácil esquecer.
+`docs/pt-BR/specs/event-normalization.md`; aqui fica só o que é fácil esquecer.
 
 ## Versões conferidas
 

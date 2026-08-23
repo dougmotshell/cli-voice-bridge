@@ -1,7 +1,7 @@
 # O que o voice-clone já aprendeu
 
 `~/www/voice-clone` é dependência externa somente leitura
-([ADR-0003](../docs/decisions/0003-tts-delegado-ao-voice-clone.md)). Estas lições
+([ADR-0003](../docs/pt-BR/decisions/0003-tts-delegado-ao-voice-clone.md)). Estas lições
 custaram tempo lá e não valem redescobrir aqui.
 
 **Carregar o XTTS-v2 leva cerca de 30 segundos.** É o motivo de o sidecar ser um

@@ -1,6 +1,6 @@
 //! Payload cru de um CLI → momento canônico.
 //!
-//! A fonte da verdade do mapa é `docs/specs/event-normalization.md`. Se este
+//! A fonte da verdade do mapa é `docs/pt-BR/specs/event-normalization.md`. Se este
 //! arquivo e o spec discordarem, o spec está certo e o código está errado.
 //!
 //! **Regra de ouro:** evento desconhecido nunca é descartado. Vira
@@ -43,7 +43,7 @@ pub fn primeiro_texto(payload: &Value, chaves: &[&str]) -> Option<String> {
 /// Encurta um texto longo para caber numa fala.
 ///
 /// Corte grosseiro e provisório. TODO: substituir pelo resumidor de verdade —
-/// ver `docs/specs/speech-output.md`, que ainda não decidiu qual.
+/// ver `docs/pt-BR/specs/speech-output.md`, que ainda não decidiu qual.
 pub fn encurtar(texto: &str, maximo: usize) -> String {
     let limpo = texto.split_whitespace().collect::<Vec<_>>().join(" ");
     if limpo.chars().count() <= maximo {

@@ -1,6 +1,6 @@
 //! Codex CLI — hooks em `PascalCase`, mais o `notify` em `kebab-case`.
 //!
-//! Verificado na versão 0.147.0. Mapa em `docs/specs/event-normalization.md`.
+//! Verificado na versão 0.147.0. Mapa em `docs/pt-BR/specs/event-normalization.md`.
 //!
 //! Duas peculiaridades que custam tempo se esquecidas:
 //!
@@ -66,7 +66,7 @@ pub fn mapear(evento: &str, p: &Value) -> (Momento, String) {
         ),
 
         // Serve para cortar a fala em curso: se a pessoa está digitando, ela já
-        // voltou (`docs/specs/speech-output.md`). Não é para ser falado.
+        // voltou (`docs/pt-BR/specs/speech-output.md`). Não é para ser falado.
         "UserPromptSubmit" => (Momento::TextoDeMensagem, String::new()),
 
         "PreCompact" | "PostCompact" => (Momento::ContextoCompactando, String::new()),

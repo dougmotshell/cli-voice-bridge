@@ -27,7 +27,7 @@ A documentação diz o que deveria existir. Isto descobre o que dispara.
    nome de projeto e às vezes trecho de código. Substitua por marcador antes de
    virar exemplo no spec ou fixture em `crates/core/tests/fixtures/`.
 
-6. **Atualize `docs/specs/event-normalization.md`**: o mapa evento → momento, os
+6. **Atualize `docs/pt-BR/specs/event-normalization.md`**: o mapa evento → momento, os
    nomes de campo confirmados, e a versão em que você verificou. O que ficou sem
    verificar é marcado como tal — linha errada custa mais caro que linha ausente.
 

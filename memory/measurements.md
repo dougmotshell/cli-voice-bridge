@@ -36,7 +36,7 @@ Perfil `opt-level = "z"`, `lto`, `strip`, `panic = "abort"`.
 ## Ainda não medido
 
 - Latência e taxa de erro do STT em pt-BR — é o que fecha o
-  [ADR-0006](../docs/decisions/0006-stt-offline-na-maquina.md), e a decisão do
+  [ADR-0006](../docs/pt-BR/decisions/0006-stt-offline-na-maquina.md), e a decisão do
   motor sai daí, não de tabela comparativa.
 - Tempo entre o evento chegar e o primeiro som sair. É o número que a pessoa
   sente; hoje não existe porque a síntese não está ligada.

@@ -116,7 +116,7 @@ fn atender(conexao: Conexao, estado: Arc<Mutex<Estado>>) {
                     e.registrar(&normalizado);
                 }
                 // TODO: daqui em diante falta tudo — deduplicação entre
-                // transportes, política (`docs/specs/speech-output.md`),
+                // transportes, política (`docs/pt-BR/specs/speech-output.md`),
                 // redação, fila e síntese. Por ora só se vê o momento.
                 println!(
                     "{} [{}/{}] {}",

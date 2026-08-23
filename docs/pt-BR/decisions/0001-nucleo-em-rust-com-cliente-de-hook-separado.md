@@ -64,7 +64,7 @@ pobre, e whisper.cpp exigiria CGo de qualquer forma — perdendo a vantagem.
 
 A premissa foi medida depois da decisão e se confirmou: o `cvb-hook` em release
 custa **1,94 ms por invocação**, incluindo o `fork` do shell e o pipe, com o
-daemon de pé. Números e método em [`memory/measurements.md`](../../memory/measurements.md).
+daemon de pé. Números e método em [`memory/measurements.md`](../../../memory/measurements.md).
 
 A decisão não muda; o registro existe para que ninguém precise remedir, e para
 que uma regressão futura tenha uma linha de base.

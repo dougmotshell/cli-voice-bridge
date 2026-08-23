@@ -1,7 +1,7 @@
 # Decisões de arquitetura (ADR)
 
 Formato MADR. Um arquivo por decisão, `NNNN-titulo-em-kebab.md`. Template em
-[`templates/adr.md`](../../templates/adr.md).
+[`templates/adr.md`](../../../templates/adr.md).
 
 **Append-only.** ADR aceito nunca é reescrito. Se a decisão muda, escreve-se um
 ADR novo e o antigo passa a `Status: substituído por NNNN`. Número não se

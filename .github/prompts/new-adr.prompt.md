@@ -1,7 +1,7 @@
 <!-- managed-by:cli-voice-bridge/sync-ai-surfaces — do not edit by hand -->
 ---
 name: new-adr
-description: Cria um novo ADR em docs/decisions/ no formato MADR, com o próximo número livre, e atualiza o índice. Use ao registrar uma decisão de arquitetura do cli-voice-bridge.
+description: Cria um novo ADR em docs/pt-BR/decisions/ no formato MADR, com o próximo número livre, e atualiza o índice. Use ao registrar uma decisão de arquitetura do cli-voice-bridge.
 agent: agent
 ---
 <!-- fonte: skills/new-adr/SKILL.md -->
@@ -16,11 +16,11 @@ Registra uma decisão de arquitetura. Um arquivo, uma decisão, nunca reescrito.
    restringe o futuro e cuja alternativa era defensável. Escolha de nome de
    variável não é ADR; escolher socket local em vez de porta TCP é.
 
-2. **Descubra o próximo número.** `ls docs/decisions/` e some um ao maior.
+2. **Descubra o próximo número.** `ls docs/pt-BR/decisions/` e some um ao maior.
    Número nunca se reaproveita, nem de ADR abandonado.
 
 3. **Copie `templates/adr.md`** para
-   `docs/decisions/NNNN-titulo-em-kebab-case.md`. Título em en-US no nome do
+   `docs/pt-BR/decisions/NNNN-titulo-em-kebab-case.md`. Título em en-US no nome do
    arquivo? Não: aqui os nomes de ADR são descritivos em pt-BR sem acento, como
    os que já existem — siga o padrão do diretório.
 
@@ -36,7 +36,7 @@ Registra uma decisão de arquitetura. Um arquivo, uma decisão, nunca reescrito.
    os specs que restringe; volte nesses specs e acrescente o ADR na lista deles.
    Referência de mão única apodrece.
 
-6. **Atualize a tabela** em `docs/decisions/README.md`.
+6. **Atualize a tabela** em `docs/pt-BR/decisions/README.md`.
 
 ## Se a decisão substitui outra
 

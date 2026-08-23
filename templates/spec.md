@@ -2,8 +2,8 @@
 
 **Capacidade:** uma frase que faça sentido para quem usa o sistema.
 
-**ADRs que restringem este spec:** [ADR-NNNN](../docs/decisions/NNNN-....md)
-**Nível C4:** [componente](../docs/architecture/03-component.md) — módulo `x::y`
+**ADRs que restringem este spec:** [ADR-NNNN](../docs/pt-BR/decisions/NNNN-....md)
+**Nível C4:** [componente](../docs/pt-BR/architecture/03-component.md) — módulo `x::y`
 
 ## Problema
 

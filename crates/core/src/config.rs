@@ -1,6 +1,6 @@
 //! Configuração: camadas, precedência e recarga.
 //!
-//! O contrato completo está em `docs/specs/configuration.md`. O que este módulo
+//! O contrato completo está em `docs/pt-BR/specs/configuration.md`. O que este módulo
 //! garante é a **precedência**, que é a única parte já fechada:
 //!
 //! 1. padrões embutidos → 2. arquivo da pessoa → 3. arquivo do projeto →
@@ -225,7 +225,7 @@ impl Config {
     /// **O que um projeto não pode fazer:** ligar o microfone, mudar o
     /// acionamento da escuta ou desligar a confirmação de comando destrutivo.
     /// Repositório clonado não manda na segurança de quem clonou
-    /// (`docs/specs/configuration.md`).
+    /// (`docs/pt-BR/specs/configuration.md`).
     pub fn mesclar_projeto(&mut self, projeto: Config) {
         let escuta_preservada = self.escuta.clone();
 

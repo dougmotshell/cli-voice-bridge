@@ -6,7 +6,7 @@
 //! inteiro de uma vez.
 //!
 //! Recurso indisponível na plataforma vira aviso explícito, nunca falha
-//! silenciosa (`docs/specs/portability.md`).
+//! silenciosa (`docs/pt-BR/specs/portability.md`).
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;

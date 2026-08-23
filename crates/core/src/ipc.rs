@@ -20,7 +20,7 @@ pub type Conexao = Box<dyn Canal>;
 fn nao_implementado_no_windows() -> io::Error {
     io::Error::new(
         io::ErrorKind::Unsupported,
-        "TODO: named pipes no Windows ainda não implementados — ver ADR-0008 e docs/specs/portability.md",
+        "TODO: named pipes no Windows ainda não implementados — ver ADR-0008 e docs/pt-BR/specs/portability.md",
     )
 }
 

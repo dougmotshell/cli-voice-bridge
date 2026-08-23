@@ -9,7 +9,7 @@ segue é só o que é específico do Claude Code.
 
 | Agente | Para quê |
 |---|---|
-| `cli-event-cartographer` | Levantar e conferir os eventos de interação de um CLI de IA e mantê-los em dia no `docs/specs/event-normalization.md` |
+| `cli-event-cartographer` | Levantar e conferir os eventos de interação de um CLI de IA e mantê-los em dia no `docs/pt-BR/specs/event-normalization.md` |
 | `voice-pipeline-doctor` | Diagnosticar a cadeia de áudio fim a fim: dispositivo, captura, STT, sidecar TTS, reprodução |
 
 ## Comandos de barra gerados

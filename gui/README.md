@@ -2,7 +2,7 @@
 
 Janela mais ícone de bandeja. É um cliente do `hookd` como qualquer outro:
 nenhuma lógica de política, fila ou síntese mora aqui (ADR-0002 e
-`docs/specs/interfaces.md`).
+`docs/pt-BR/specs/interfaces.md`).
 
 ## Estado: não criada
 
@@ -25,7 +25,7 @@ Escolhas que já estão decididas e não precisam ser rediscutidas no assistente
 
 ## O que a GUI mostra
 
-Especificado em `docs/specs/interfaces.md`:
+Especificado em `docs/pt-BR/specs/interfaces.md`:
 
 - Painel ao vivo: momentos chegando, o que está falando, a fila, botão de cortar
 - Indicador de microfone **inconfundível** quando está gravando
@@ -36,5 +36,5 @@ Especificado em `docs/specs/interfaces.md`:
 ## Paridade
 
 Tudo que a GUI faz, a CLI faz — e vice-versa. As duas únicas divergências
-deliberadas estão listadas em `docs/specs/interfaces.md`. Qualquer outra é
+deliberadas estão listadas em `docs/pt-BR/specs/interfaces.md`. Qualquer outra é
 defeito.

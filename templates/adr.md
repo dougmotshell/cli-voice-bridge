@@ -1,8 +1,8 @@
 # ADR-NNNN — Título afirmativo, dizendo a decisão
 
 **Status:** proposto | aceito | substituído por NNNN — AAAA-MM-DD
-**Nível C4:** [contexto|contêiner|componente](../docs/architecture/0N-....md)
-**Specs que esta decisão move:** [nome](../docs/specs/nome.md)
+**Nível C4:** [contexto|contêiner|componente](../docs/pt-BR/architecture/0N-....md)
+**Specs que esta decisão move:** [nome](../docs/pt-BR/specs/nome.md)
 
 ## Contexto
 

@@ -17,7 +17,7 @@
 //! ```
 //!
 //! O Codex passa o JSON como argumento final em vez de pelo stdin — daí a
-//! segunda forma. Ver `docs/specs/capture-transports.md`.
+//! segunda forma. Ver `docs/pt-BR/specs/capture-transports.md`.
 
 use std::io::Read;
 use std::str::FromStr;
@@ -80,7 +80,7 @@ fn executar() -> Result<(), String> {
 
     // Não esperamos resposta: o agente está bloqueado enquanto estivermos vivos.
     // Decisão de permissão por voz vai precisar esperar, e é a única exceção —
-    // ver docs/specs/speech-input.md quando for implementada.
+    // ver docs/pt-BR/specs/speech-input.md quando for implementada.
     Ok(())
 }
 

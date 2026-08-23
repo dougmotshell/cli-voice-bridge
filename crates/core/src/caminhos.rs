@@ -2,7 +2,7 @@
 //!
 //! Nenhum outro módulo escreve caminho de plataforma à mão. Um literal
 //! `~/.config` espalhado pelo código é defeito, e é o tipo de defeito que só
-//! aparece na máquina de outra pessoa (`docs/specs/portability.md`).
+//! aparece na máquina de outra pessoa (`docs/pt-BR/specs/portability.md`).
 
 use std::path::PathBuf;
 

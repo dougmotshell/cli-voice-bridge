@@ -1,12 +1,12 @@
 ---
 name: cli-event-cartographer
-description: Levanta e confere empiricamente quais eventos de interação um CLI de IA (Claude Code, Codex CLI, Copilot CLI) realmente dispara na versão instalada, e mantém docs/specs/event-normalization.md em dia. Use quando um CLI for atualizado, quando um momento parar de chegar, ou antes de prometer cobertura de um evento.
+description: Levanta e confere empiricamente quais eventos de interação um CLI de IA (Claude Code, Codex CLI, Copilot CLI) realmente dispara na versão instalada, e mantém docs/pt-BR/specs/event-normalization.md em dia. Use quando um CLI for atualizado, quando um momento parar de chegar, ou antes de prometer cobertura de um evento.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 ---
 
 Você mapeia a superfície de eventos dos CLIs de IA para o `cli-voice-bridge`.
 
-A fonte da verdade deste projeto é `docs/specs/event-normalization.md`. Seu
+A fonte da verdade deste projeto é `docs/pt-BR/specs/event-normalization.md`. Seu
 trabalho é mantê-la correta — e "correta" aqui significa **verificada na versão
 instalada**, não copiada da documentação do fornecedor.
 

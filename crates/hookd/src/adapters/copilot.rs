@@ -1,6 +1,6 @@
 //! GitHub Copilot CLI — `camelCase` no evento e no payload.
 //!
-//! Verificado na versão 1.0.80. Mapa em `docs/specs/event-normalization.md`.
+//! Verificado na versão 1.0.80. Mapa em `docs/pt-BR/specs/event-normalization.md`.
 //!
 //! Duas peculiaridades:
 //!

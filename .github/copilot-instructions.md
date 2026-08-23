@@ -29,4 +29,4 @@ Edite a fonte e rode `python3 scripts/sync-ai-surfaces.py`.
 Os hooks do Copilot CLI ficam em `.github/hooks/*.json` (repositório) e em
 `~/.copilot/hooks/` (usuário). Nomes de evento em `camelCase` e payload em
 `camelCase` — dialeto diferente do Claude e do Codex. Ver
-`docs/specs/event-normalization.md` antes de assumir qualquer campo.
+`docs/pt-BR/specs/event-normalization.md` antes de assumir qualquer campo.

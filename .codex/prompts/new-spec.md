@@ -9,7 +9,7 @@ provavelmente não é um spec: é detalhe de implementação.
 
 ## Passos
 
-1. **Copie `templates/spec.md`** para `docs/specs/<nome-em-kebab>.md`. Nome em
+1. **Copie `templates/spec.md`** para `docs/pt-BR/specs/<nome-em-kebab>.md`. Nome em
    en-US, como os existentes (`speech-output`, `event-normalization`).
 
 2. **Comece pelo problema**, não pela solução. Uma capacidade cujo problema você

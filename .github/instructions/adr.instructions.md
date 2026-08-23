@@ -1,6 +1,6 @@
 <!-- managed-by:cli-voice-bridge/sync-ai-surfaces — do not edit by hand -->
 ---
-applyTo: "docs/decisions/*.md"
+applyTo: "docs/*/decisions/*.md"
 ---
 <!-- fonte: .claude/rules/adr.md -->
 
@@ -28,4 +28,4 @@ meses.
 **Consequências incluem as ruins.** ADR que só lista vantagens não foi pensado.
 
 Depois de criar ou renumerar, atualize a tabela em
-[`docs/decisions/README.md`](../../docs/decisions/README.md).
+[`docs/pt-BR/decisions/README.md`](../../docs/pt-BR/decisions/README.md).

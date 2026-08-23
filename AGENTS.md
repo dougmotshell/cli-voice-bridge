@@ -17,11 +17,11 @@ ainda não existem — estão marcados `TODO:` aqui e nos specs.
 
 | Camada | Escolha | Onde está decidido |
 |---|---|---|
-| Núcleo (daemon + CLI) | Rust | [ADR-0001](docs/decisions/0001-nucleo-em-rust-com-cliente-de-hook-separado.md) |
-| GUI | Tauri v2 | [ADR-0002](docs/decisions/0002-gui-em-tauri-v2.md) |
-| Síntese de voz (TTS) | delegada ao `voice-clone` por sidecar Python | [ADR-0003](docs/decisions/0003-tts-delegado-ao-voice-clone.md) |
-| Reconhecimento (STT) | offline, na máquina | [ADR-0006](docs/decisions/0006-stt-offline-na-maquina.md) |
-| Transporte de eventos | hooks oficiais + wrapper PTY + protocolo de agente | [ADR-0004](docs/decisions/0004-hooks-oficiais-como-transporte-primario.md), [ADR-0005](docs/decisions/0005-wrapper-pty-como-transporte-complementar.md) |
+| Núcleo (daemon + CLI) | Rust | [ADR-0001](docs/pt-BR/decisions/0001-nucleo-em-rust-com-cliente-de-hook-separado.md) |
+| GUI | Tauri v2 | [ADR-0002](docs/pt-BR/decisions/0002-gui-em-tauri-v2.md) |
+| Síntese de voz (TTS) | delegada ao `voice-clone` por sidecar Python | [ADR-0003](docs/pt-BR/decisions/0003-tts-delegado-ao-voice-clone.md) |
+| Reconhecimento (STT) | offline, na máquina | [ADR-0006](docs/pt-BR/decisions/0006-stt-offline-na-maquina.md) |
+| Transporte de eventos | hooks oficiais + wrapper PTY + protocolo de agente | [ADR-0004](docs/pt-BR/decisions/0004-hooks-oficiais-como-transporte-primario.md), [ADR-0005](docs/pt-BR/decisions/0005-wrapper-pty-como-transporte-complementar.md) |
 
 ```
 crates/core/      esquema de momentos, protocolo de IPC, caminhos por plataforma
@@ -63,7 +63,7 @@ Não há CI ainda. TODO: rodar `cargo test`, `clippy`, `fmt --check` e
 por sessão e roda em série com o agente. O `hookc` precisa ser um binário que
 abre socket, despeja o payload e sai — sem parsing pesado, sem I/O de rede, sem
 carregar modelo. Toda a lógica mora no `hookd`. Um `hookc` de 40 ms é 40 ms de
-lentidão em cada ferramenta que a pessoa vê ([ADR-0001](docs/decisions/0001-nucleo-em-rust-com-cliente-de-hook-separado.md)).
+lentidão em cada ferramenta que a pessoa vê ([ADR-0001](docs/pt-BR/decisions/0001-nucleo-em-rust-com-cliente-de-hook-separado.md)).
 
 **Nunca sobrescreva a configuração de hooks de terceiros.** Esta máquina já roda
 `rtk hook claude` em `PreToolUse` no Claude e no Codex. A instalação **compõe**:
@@ -73,14 +73,14 @@ que reescreve `settings.json` inteiro apaga trabalho alheio.
 **Hook que falha não pode travar o agente.** Falha de áudio, sidecar morto,
 daemon fora do ar — tudo isso sai com código 0 e silêncio. A única exceção é a
 decisão de permissão por voz, e mesmo ela cai para "perguntar na tela" quando o
-reconhecimento não é confiável. Ver `docs/specs/speech-input.md`.
+reconhecimento não é confiável. Ver `docs/pt-BR/specs/speech-input.md`.
 
 **Payloads de hook são de três dialetos diferentes.** Claude usa `snake_case`
 (`tool_name`, `hook_event_name`); Copilot usa `camelCase` (`toolName`,
 `sessionId`) e aceita o nome do evento em duas grafias; Codex usa `PascalCase` no
 evento com payload `snake_case`. Não trate como um só formato — normalize na
 borda, em `crates/core`. O mapa completo está em
-`docs/specs/event-normalization.md`, e é a fonte da verdade.
+`docs/pt-BR/specs/event-normalization.md`, e é a fonte da verdade.
 
 **Áudio de voz é dado biométrico.** A voz clonada vem do `voice-clone`, cujos
 diretórios `vozes/` e `saida/` já são segredo. Aqui vale o mesmo: nenhuma amostra
@@ -89,7 +89,7 @@ da máquina. STT e TTS rodam localmente; não introduza provedor de nuvem sem AD
 
 **O conteúdo falado vaza contexto.** O texto de um evento pode conter caminho de
 arquivo, nome de cliente, trecho de código. Falar em voz alta é publicar num
-ambiente compartilhado. A política de redação (`docs/specs/speech-output.md`) não
+ambiente compartilhado. A política de redação (`docs/pt-BR/specs/speech-output.md`) não
 é enfeite.
 
 **Licença do XTTS-v2 proíbe uso comercial.** O `voice-clone` usa CPML. Este
@@ -113,10 +113,10 @@ nunca dois padrões no mesmo arquivo:
 
 | Árvore | Padrão | Um arquivo por |
 |---|---|---|
-| `docs/architecture/` | C4 | nível (contexto, contêiner, componente) |
-| `docs/specs/` | SDD | capacidade |
-| `docs/decisions/` | ADR (MADR) | decisão, `NNNN-titulo-em-kebab.md` |
-| `docs/manual/` | manual | tarefa da pessoa usuária |
+| `docs/pt-BR/architecture/` | C4 | nível (contexto, contêiner, componente) |
+| `docs/pt-BR/specs/` | SDD | capacidade |
+| `docs/pt-BR/decisions/` | ADR (MADR) | decisão, `NNNN-titulo-em-kebab.md` |
+| `docs/pt-BR/manual/` | manual | tarefa da pessoa usuária |
 
 Índice em `docs/README.md`. Diagramas são texto (Mermaid) dentro do Markdown.
 
@@ -133,7 +133,7 @@ Recurso novo entra nas duas ou entra com o motivo escrito de por que só numa.
 **Três sistemas operacionais, sempre.** Linux, macOS e Windows são requisito, não
 aspiração. Caminho de configuração, socket de IPC, atalho global e captura de
 áudio divergem nos três — código que só funciona no Linux é código incompleto.
-Ver `docs/specs/portability.md`.
+Ver `docs/pt-BR/specs/portability.md`.
 
 ## Superfícies de IA
 

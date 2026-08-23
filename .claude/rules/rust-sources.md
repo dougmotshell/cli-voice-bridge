@@ -15,7 +15,7 @@ saída com código 0 e silêncio. `unwrap()` e `expect()` aí são defeito.
 
 **`core` não depende de `adapters`.** A seta é sempre `adapters → core`. É o que
 permite acrescentar um quarto CLI sem tocar no núcleo
-([ADR-0007](../../docs/decisions/0007-esquema-canonico-de-momentos.md)).
+([ADR-0007](../../docs/pt-BR/decisions/0007-esquema-canonico-de-momentos.md)).
 
 **Payload de terceiro é dado, não contrato.** Campo ausente ou tipo inesperado é
 normal — os CLIs mudam sem avisar. Desserialize com tolerância e transforme o
@@ -23,7 +23,7 @@ desconhecido em `error` com o nome cru, nunca em pânico.
 
 **Nada de caminho fixo de plataforma.** Configuração, socket, cache e log saem de
 funções que conhecem os três sistemas. Um literal `~/.config` no código é
-defeito ([portability](../../docs/specs/portability.md)).
+defeito ([portability](../../docs/pt-BR/specs/portability.md)).
 
 **Segredo não chega ao log.** `redact` roda antes do molde e antes de qualquer
 escrita em disco. Se você está logando um payload cru para depurar, é temporário

@@ -3,7 +3,7 @@
 //! É um cliente do daemon como qualquer outro: nenhuma lógica de política, fila
 //! ou síntese mora aqui. Recurso novo entra no daemon e é exposto nas duas
 //! interfaces — é o que torna a paridade com a GUI uma consequência em vez de
-//! uma promessa (`docs/specs/interfaces.md`).
+//! uma promessa (`docs/pt-BR/specs/interfaces.md`).
 //!
 //! Códigos de saída: `0` sucesso, `1` falha de execução, `2` configuração
 //! inválida, `3` daemon fora do ar.
@@ -266,6 +266,6 @@ fn ler_resposta(conexao: ipc::Conexao) -> Option<Resposta> {
 
 fn nao_implementado(comando: &str) -> ExitCode {
     eprintln!("cvb: `{comando}` ainda não foi implementado.");
-    eprintln!("     O contrato pretendido está em docs/specs/interfaces.md.");
+    eprintln!("     O contrato pretendido está em docs/pt-BR/specs/interfaces.md.");
     ExitCode::from(SAIDA_FALHA)
 }

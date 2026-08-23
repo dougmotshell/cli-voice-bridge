@@ -19,10 +19,10 @@ sai da máquina. Projeto pessoal, sem uso comercial.
 |---|---|
 | **[AGENTS.md](AGENTS.md)** | Contrato canônico: stack, armadilhas, convenções |
 | **[Índice da documentação](docs/README.md)** | As quatro árvores e o que há em cada uma |
-| **[Manual](docs/manual/README.md)** | Instalar, configurar, usar, resolver problemas |
-| **[Arquitetura C4](docs/architecture/README.md)** | Contexto, contêineres, componentes |
+| **[Manual](docs/pt-BR/manual/README.md)** | Instalar, configurar, usar, resolver problemas |
+| **[Arquitetura C4](docs/pt-BR/architecture/README.md)** | Contexto, contêineres, componentes |
 | **[Specs](docs/README.md#specs)** | Uma capacidade por arquivo |
-| **[ADRs](docs/decisions/README.md)** | As oito decisões e seus porquês |
+| **[ADRs](docs/pt-BR/decisions/README.md)** | As oito decisões e seus porquês |
 
 ## Como funciona
 
@@ -38,13 +38,13 @@ que merece ser falado, e manda sintetizar na sua voz clonada — pelo
 volta por voz: pergunta fechada resolvida pelo próprio hook, ou ditado
 transcrito localmente.
 
-Detalhes em [docs/architecture/01-context.md](docs/architecture/01-context.md).
+Detalhes em [docs/pt-BR/architecture/01-context.md](docs/pt-BR/architecture/01-context.md).
 
 ## Stack
 
 Núcleo e CLI em **Rust** (o hook precisa custar quase nada), GUI em **Tauri v2**,
 síntese delegada ao `voice-clone` por um sidecar **Python** que mantém o modelo
-carregado. Os porquês estão nos [ADRs](docs/decisions/README.md).
+carregado. Os porquês estão nos [ADRs](docs/pt-BR/decisions/README.md).
 
 ## Dependências
 

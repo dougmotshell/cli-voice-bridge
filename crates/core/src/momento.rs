@@ -4,7 +4,7 @@
 //! resto do sistema (ADR-0007). Política, fila, GUI e configuração só conhecem
 //! momentos — nunca o payload cru de um CLI.
 //!
-//! A definição de cada momento está em `docs/specs/event-normalization.md`.
+//! A definição de cada momento está em `docs/pt-BR/specs/event-normalization.md`.
 
 use serde::{Deserialize, Serialize};
 
@@ -89,7 +89,7 @@ impl std::str::FromStr for Transporte {
 /// Quanto o momento merece interromper a pessoa.
 ///
 /// A ordem importa: `Ord` é usado pela fila de fala para decidir prioridade e
-/// corte. Não reordene as variantes sem ler `docs/specs/speech-output.md`.
+/// corte. Não reordene as variantes sem ler `docs/pt-BR/specs/speech-output.md`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Urgencia {
@@ -165,7 +165,7 @@ impl Momento {
 
     /// Urgência antes de qualquer configuração da pessoa.
     ///
-    /// A tabela é a de `docs/specs/speech-output.md`. Mudança aqui muda o
+    /// A tabela é a de `docs/pt-BR/specs/speech-output.md`. Mudança aqui muda o
     /// comportamento padrão de quem nunca configurou nada — mexa junto com o
     /// spec, não sozinho.
     pub fn urgencia_padrao(self) -> Urgencia {

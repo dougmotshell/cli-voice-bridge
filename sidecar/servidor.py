@@ -37,7 +37,7 @@ def raiz_voice_clone() -> Path:
     if not bruto:
         raise SystemExit(
             "CVB_VOICE_CLONE não definido. Aponte para a raiz do voice-clone.\n"
-            "Ver docs/manual/instalacao.md."
+            "Ver docs/pt-BR/manual/instalacao.md."
         )
     raiz = Path(bruto).expanduser()
     if not (raiz / "falar.py").is_file():
@@ -79,7 +79,7 @@ class Motor:
 
     def sintetizar(self, texto: str, voz: str, idioma: str, saida: str) -> dict:
         # O XTTS não é reentrante; uma síntese por vez. A fila de prioridade
-        # mora no daemon, não aqui (docs/specs/speech-output.md).
+        # mora no daemon, não aqui (docs/pt-BR/specs/speech-output.md).
         with self._trava:
             r = self._modulo().sintetizar(
                 texto=texto, voz=voz, idioma=idioma, saida=saida
@@ -164,5 +164,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     # TODO: no Windows não há AF_UNIX aqui; precisa de named pipe, como o daemon
-    # (ADR-0008, docs/specs/portability.md).
+    # (ADR-0008, docs/pt-BR/specs/portability.md).
     sys.exit(main())

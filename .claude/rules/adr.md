@@ -1,6 +1,6 @@
 ---
 paths:
-  - "docs/decisions/*.md"
+  - "docs/*/decisions/*.md"
 ---
 
 # ADRs
@@ -27,4 +27,4 @@ meses.
 **Consequências incluem as ruins.** ADR que só lista vantagens não foi pensado.
 
 Depois de criar ou renumerar, atualize a tabela em
-[`docs/decisions/README.md`](../../docs/decisions/README.md).
+[`docs/pt-BR/decisions/README.md`](../../docs/pt-BR/decisions/README.md).

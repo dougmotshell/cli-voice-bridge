@@ -26,6 +26,9 @@ Uso:
 
 O `--check` serve para CI: ele falha quando alguém editou uma saída à mão ou
 esqueceu de rodar o gerador depois de mexer numa fonte.
+
+Traduções (`<nome>.en-US.md`, `SKILL.en-US.md`) são ignoradas: elas existem para
+quem lê, não para o modelo carregar duas vezes a mesma skill.
 """
 
 from __future__ import annotations
@@ -41,6 +44,16 @@ BANNER = "<!-- managed-by:cli-voice-bridge/sync-ai-surfaces — do not edit by h
 DIR_AGENTES = RAIZ / ".claude/agents"
 DIR_SKILLS = RAIZ / "skills"
 DIR_REGRAS = RAIZ / ".claude/rules"
+
+# Toda prosa deste projeto existe em pt-BR e en-US. A fonte é o arquivo sem
+# sufixo (pt-BR, a fonte da verdade); a tradução é um irmão com sufixo de língua
+# — `adr.en-US.md`, `SKILL.en-US.md`. O gerador projeta só a fonte: uma tradução
+# projetada viraria uma skill ou regra duplicada, com o mesmo `name`.
+SUFIXO_TRADUCAO = re.compile(r"\.[a-z]{2}-[A-Z]{2}$")
+
+
+def eh_traducao(caminho: Path) -> bool:
+    return bool(SUFIXO_TRADUCAO.search(caminho.stem))
 
 
 # --- frontmatter -----------------------------------------------------------
@@ -101,6 +114,8 @@ def bloco_toml(corpo: str) -> str:
 def coletar_skills() -> list[tuple[str, dict[str, str], str]]:
     itens = []
     for skill in sorted(DIR_SKILLS.glob("*/SKILL.md")):
+        if eh_traducao(skill):
+            continue
         campos, corpo = separar_frontmatter(skill.read_text(encoding="utf-8"))
         nome = campos.get("name") or skill.parent.name
         if not campos.get("name") or not campos.get("description"):
@@ -114,6 +129,8 @@ def coletar_skills() -> list[tuple[str, dict[str, str], str]]:
 def coletar_agentes() -> list[tuple[str, dict[str, str], str]]:
     itens = []
     for agente in sorted(DIR_AGENTES.glob("*.md")):
+        if eh_traducao(agente):
+            continue
         campos, corpo = separar_frontmatter(agente.read_text(encoding="utf-8"))
         nome = campos.get("name") or agente.stem
         if not campos.get("description"):
@@ -125,6 +142,8 @@ def coletar_agentes() -> list[tuple[str, dict[str, str], str]]:
 def coletar_regras() -> list[tuple[str, dict[str, str], str]]:
     itens = []
     for regra in sorted(DIR_REGRAS.glob("*.md")):
+        if eh_traducao(regra):
+            continue
         campos, corpo = separar_frontmatter(regra.read_text(encoding="utf-8"))
         if not campos.get("paths"):
             raise SystemExit(f"{regra.relative_to(RAIZ)}: frontmatter precisa de `paths:`.")

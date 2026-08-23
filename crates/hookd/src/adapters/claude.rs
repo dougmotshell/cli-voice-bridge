@@ -1,6 +1,6 @@
 //! Claude Code — evento em `PascalCase`, payload em `snake_case`.
 //!
-//! Verificado na versão 2.1.241. Mapa em `docs/specs/event-normalization.md`.
+//! Verificado na versão 2.1.241. Mapa em `docs/pt-BR/specs/event-normalization.md`.
 //!
 //! TODO: o Claude tem cerca de 30 eventos e aqui está mapeada pouco mais da
 //! metade. Os que faltam estão listados no spec, em *Questões em aberto*.
