@@ -105,20 +105,25 @@ configuração — nunca embutido no código. Mudança que exigiria alterar o
 
 ## Convenções
 
-**Idioma.** Prosa (documentação, comentários, mensagens ao usuário) em pt-BR com
-acentuação completa. Identificadores, nomes de arquivo e de branch em en-US.
+**Idioma: pt-BR e en-US, sempre as duas.** pt-BR é a fonte da verdade e vem
+primeiro; en-US é irmão de mesmo nome, abrindo com um ponteiro para o original.
+Identificadores, nomes de arquivo e de branch em en-US. Acentuação completa.
 
-**Documentação mora em `docs/`, em uma das quatro árvores.** Nunca solta na raiz,
-nunca dois padrões no mesmo arquivo:
+Prosa nova nasce em pt-BR e só está pronta quando o irmão en-US existe. Vale para
+o contrato, os adaptadores, as skills, as regras e as quatro árvores de `docs/`.
+
+**Documentação mora em `docs/<idioma>/`, em uma das quatro árvores.** Nunca solta
+na raiz, nunca dois padrões no mesmo arquivo, nunca `docs/` plano:
 
 | Árvore | Padrão | Um arquivo por |
 |---|---|---|
-| `docs/pt-BR/architecture/` | C4 | nível (contexto, contêiner, componente) |
-| `docs/pt-BR/specs/` | SDD | capacidade |
-| `docs/pt-BR/decisions/` | ADR (MADR) | decisão, `NNNN-titulo-em-kebab.md` |
-| `docs/pt-BR/manual/` | manual | tarefa da pessoa usuária |
+| `docs/<idioma>/architecture/` | C4 | nível (contexto, contêiner, componente) |
+| `docs/<idioma>/specs/` | SDD | capacidade |
+| `docs/<idioma>/decisions/` | ADR (MADR) | decisão, `NNNN-titulo-em-kebab.md` |
+| `docs/<idioma>/manual/` | manual | tarefa da pessoa usuária |
 
-Índice em `docs/README.md`. Diagramas são texto (Mermaid) dentro do Markdown.
+Nomes de arquivo **idênticos** nas duas subárvores — tradução é irmão, nunca
+bifurcação. Índice em `docs/README.md`. Diagramas são texto (Mermaid).
 
 **ADR é append-only.** ADR aceito é substituído por um novo
 (`Status: substituído por NNNN`), nunca reescrito; número nunca se reaproveita.
@@ -146,3 +151,8 @@ e carrega um banner na primeira linha. Edite a fonte e rode o gerador:
 python3 scripts/sync-ai-surfaces.py          # projeta
 python3 scripts/sync-ai-surfaces.py --check  # falha se houver divergência
 ```
+
+Traduções são irmãs com sufixo de língua — `AGENTS.en-US.md`, `SKILL.en-US.md`,
+`adr.en-US.md` — e o gerador as **ignora**: projetada, uma skill traduzida viraria
+uma segunda skill com o mesmo `name`. Elas também não levam frontmatter, para que
+nenhum CLI as carregue como definição.
