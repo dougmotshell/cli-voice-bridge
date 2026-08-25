@@ -34,7 +34,7 @@ do IntelliJ ou numa sessão remota.
 O hook é atendido por um binário minúsculo que só repassa o evento a um daemon.
 O daemon traduz os três dialetos num vocabulário único de **momentos**, decide o
 que merece ser falado, e manda sintetizar na sua voz clonada — pelo
-[`voice-clone`](../voice-clone), que roda XTTS-v2 offline em CPU. A resposta
+[`voice-clone`](https://github.com/dougmotshell/voice-clone), que roda XTTS-v2 offline em CPU. A resposta
 volta por voz: pergunta fechada resolvida pelo próprio hook, ou ditado
 transcrito localmente.
 
@@ -48,8 +48,10 @@ carregado. Os porquês estão nos [ADRs](docs/pt-BR/decisions/README.md).
 
 ## Dependências
 
-- [`voice-clone`](../voice-clone) — motor de síntese, tratado como dependência
-  externa somente leitura. Precisa estar funcionando (`falar.py checar`).
+- [`voice-clone`](https://github.com/dougmotshell/voice-clone) — motor de
+  síntese, tratado como dependência externa somente leitura. Instala-se com o
+  `scripts/install.sh` dele (vai para `~/.local/share/voice-clone`) e precisa
+  estar funcionando (`voice-clone checar`).
 - Pelo menos um dos CLIs: Claude Code, Codex CLI ou GitHub Copilot CLI.
 
 ## Compilar
@@ -84,8 +86,8 @@ Sem o sidecar de síntese de pé, ele fala com a voz do sistema (`espeak-ng`,
 `say`, SAPI) e diz que foi por aí — nunca fica mudo. Para a voz clonada:
 
 ```bash
-CVB_VOICE_CLONE=~/www/voice-clone \
-  ~/www/voice-clone/.venv/bin/python sidecar/servidor.py
+CVB_VOICE_CLONE=~/.local/share/voice-clone \
+  ~/.local/share/voice-clone/.venv/bin/python sidecar/servidor.py
 ```
 
 ## Ligar aos seus CLIs

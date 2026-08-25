@@ -22,9 +22,11 @@ já se sabe que vai acontecer, pela natureza das peças.
 
 É o fallback: o sidecar do XTTS não subiu e ele caiu para a voz do sistema, de
 propósito — avisar com voz feia é melhor que não avisar. `cvb doctor` diz por
-quê. Causas prováveis: caminho do `voice-clone` errado na configuração, venv de
-lá quebrado (`falar.py checar` no `voice-clone` resolve isso), ou o nome da voz
-não existe (`falar.py vozes`).
+quê. Causas prováveis: caminho do `voice-clone` errado na configuração (o
+instalador o põe em `~/.local/share/voice-clone`; confira `[voice_clone] raiz`
+ou `CVB_VOICE_CLONE`), venv de lá quebrado (`voice-clone checar` resolve isso),
+ou o nome da voz não existe (`voice-clone vozes` lista as cadastradas em
+`<raiz>/vozes/`).
 
 ## A primeira fala demora muito
 

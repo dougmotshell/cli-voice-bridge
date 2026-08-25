@@ -31,6 +31,8 @@ Edite a fonte em `.claude/agents/`, `skills/` ou `.claude/rules/` e rode
 
 ## Ao mexer nos hooks deste projeto
 
-Este repositório instala hooks do Claude Code em `~/.claude/settings.json`. Essa
-máquina já tem hooks de terceiros lá (`rtk`). Ler antes de escrever, compor em
-vez de substituir — ver a armadilha correspondente em `AGENTS.md`.
+Este repositório instala hooks do Claude Code em `~/.claude/settings.json`. A
+máquina de desenvolvimento já tem hooks de terceiros lá (`rtk`); a de outra
+pessoa pode não ter nada, nem o arquivo. Ler antes de escrever, compor em vez de
+substituir, criar do zero quando não houver — e testar os dois cenários. Ver a
+armadilha correspondente em `AGENTS.md`.

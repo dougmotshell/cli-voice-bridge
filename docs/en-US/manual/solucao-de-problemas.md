@@ -26,8 +26,10 @@ what is already known to be coming, from the nature of the pieces.
 That is the fallback: the XTTS sidecar did not come up and it fell back to the
 system voice, on purpose — warning with an ugly voice beats not warning.
 `cvb doctor` says why. Likely causes: the wrong `voice-clone` path in the
-configuration, a broken venv over there (`falar.py checar` in `voice-clone`
-settles that), or a voice name that does not exist (`falar.py vozes`).
+configuration (the installer puts it in `~/.local/share/voice-clone`; check
+`[voice_clone] raiz` or `CVB_VOICE_CLONE`), a broken venv over there
+(`voice-clone checar` settles that), or a voice name that does not exist
+(`voice-clone vozes` lists the ones registered in `<raiz>/vozes/`).
 
 ## The first utterance takes too long
 

@@ -296,7 +296,7 @@ fn vozes() -> ExitCode {
     match ler_resposta(conexao) {
         Some(Resposta::Vozes { vozes }) if vozes.is_empty() => {
             println!("Nenhuma voz cadastrada no voice-clone.");
-            println!("Cadastre uma lá: falar.py cadastrar <nome> <audio.wav>");
+            println!("Cadastre uma lá: voice-clone cadastrar <nome> <audio.wav>");
             ExitCode::SUCCESS
         }
         Some(Resposta::Vozes { vozes }) => {

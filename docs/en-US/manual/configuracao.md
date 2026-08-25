@@ -73,7 +73,17 @@ cvb profile use foco       # narration on
 [geral]
 voz = "douglas"      # a voice registered in voice-clone
 idioma = "pt-BR"
+
+[voice_clone]
+raiz = "~/.local/share/voice-clone"   # where the voice-clone installer puts it
+python = ""                           # empty = <raiz>/.venv/bin/python
 ```
+
+`raiz` is the folder that holds `falar.py`; when empty, the `CVB_VOICE_CLONE`
+environment variable applies. `python` only needs a value when the interpreter
+is not in the default `.venv/` (on Windows the default is
+`<raiz>\.venv\Scripts\python.exe`). Registered voices live in `<raiz>/vozes/`;
+`cvb voices` lists the same ones as `voice-clone vozes`.
 
 `cvb say "teste"` confirms the whole chain works.
 

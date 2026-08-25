@@ -72,10 +72,14 @@ a socket, dumps the payload, and exits — no heavy parsing, no network I/O, no
 model loading. All the logic lives in `hookd`. A 40 ms `hookc` is 40 ms of
 slowness on every tool the person sees ([ADR-0001](docs/en-US/decisions/0001-nucleo-em-rust-com-cliente-de-hook-separado.md)).
 
-**Never overwrite third-party hook configuration.** This machine already runs
-`rtk hook claude` on `PreToolUse` in Claude and Codex. Installation **composes**:
-read the existing JSON, append the `cvb` entry, preserve the rest. An installer
-that rewrites the whole `settings.json` erases someone else's work.
+**Never overwrite third-party hook configuration.** Some machines already run
+other hooks — the development one has `rtk hook claude` on `PreToolUse` in Claude
+and Codex; others have no hook at all, not even a configuration file.
+Installation handles both: it **composes** when something is there, reading the
+existing JSON, appending the `cvb` entry, and preserving the rest; it creates from
+scratch when nothing is. An installer that rewrites the whole `settings.json`
+erases someone else's work, and one that requires `rtk` to be present breaks for
+whoever does not use it.
 
 **A failing hook must not block the agent.** Audio failure, dead sidecar, daemon
 down — all of that exits with code 0 and in silence. The single exception is the
@@ -106,10 +110,14 @@ commercial use.
 
 ## The voice-clone dependency
 
-`~/www/voice-clone` is the speech engine, treated as a **read-only external
-dependency**. Integration goes through its CLI contract
-(`falar.py falar <voice> "text"`), never through a module import, and the path
-comes from configuration — never embedded in code. A change that would require
+[`voice-clone`](https://github.com/dougmotshell/voice-clone) is the speech
+engine, treated as a **read-only external dependency**. Its installer puts it in
+`~/.local/share/voice-clone` (with a `voice-clone` shortcut in `~/.local/bin`),
+but a clone of the repository works too. Integration goes through its CLI
+contract (`falar.py falar <voice> "text"`, the same thing the `voice-clone falar`
+shortcut runs), never through a module import, and the path comes from
+configuration (`[voice_clone] raiz` or `CVB_VOICE_CLONE`) — never embedded in
+code. A change that would require
 altering `voice-clone` is a separate conversation, not a patch on the side.
 
 ## Conventions

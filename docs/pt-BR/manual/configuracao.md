@@ -67,7 +67,17 @@ cvb profile use foco       # narração ligada
 [geral]
 voz = "douglas"      # nome cadastrado no voice-clone
 idioma = "pt-BR"
+
+[voice_clone]
+raiz = "~/.local/share/voice-clone"   # onde o instalador do voice-clone o põe
+python = ""                           # vazio = <raiz>/.venv/bin/python
 ```
+
+`raiz` é a pasta que tem o `falar.py`; vazio, vale a variável de ambiente
+`CVB_VOICE_CLONE`. `python` só precisa ser preenchido se o interpretador não
+estiver no `.venv/` padrão (no Windows o padrão é `<raiz>\.venv\Scripts\python.exe`).
+As vozes cadastradas ficam em `<raiz>/vozes/`; `cvb voices` lista as mesmas que
+`voice-clone vozes`.
 
 `cvb say "teste"` confirma que a cadeia inteira funciona.
 

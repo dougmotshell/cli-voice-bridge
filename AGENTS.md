@@ -67,10 +67,13 @@ abre socket, despeja o payload e sai — sem parsing pesado, sem I/O de rede, se
 carregar modelo. Toda a lógica mora no `hookd`. Um `hookc` de 40 ms é 40 ms de
 lentidão em cada ferramenta que a pessoa vê ([ADR-0001](docs/pt-BR/decisions/0001-nucleo-em-rust-com-cliente-de-hook-separado.md)).
 
-**Nunca sobrescreva a configuração de hooks de terceiros.** Esta máquina já roda
-`rtk hook claude` em `PreToolUse` no Claude e no Codex. A instalação **compõe**:
-lê o JSON existente, acrescenta a entrada do `cvb`, preserva o resto. Instalador
-que reescreve `settings.json` inteiro apaga trabalho alheio.
+**Nunca sobrescreva a configuração de hooks de terceiros.** Algumas máquinas
+já rodam outros hooks — a de desenvolvimento tem `rtk hook claude` em
+`PreToolUse` no Claude e no Codex; outras não têm hook nenhum, nem arquivo de
+configuração. A instalação atende aos dois casos: **compõe** quando há algo, lendo
+o JSON existente, acrescentando a entrada do `cvb` e preservando o resto; cria do
+zero quando não há. Instalador que reescreve `settings.json` inteiro apaga
+trabalho alheio, e instalador que exige `rtk` presente quebra em quem não o usa.
 
 **Hook que falha não pode travar o agente.** Falha de áudio, sidecar morto,
 daemon fora do ar — tudo isso sai com código 0 e silêncio. A única exceção é a
@@ -99,11 +102,15 @@ projeto herda a restrição enquanto depender dele. Não sugira uso comercial.
 
 ## Dependência do voice-clone
 
-`~/www/voice-clone` é o motor de fala, tratado como
-**dependência externa somente leitura**. A integração é pelo contrato de CLI dele
-(`falar.py falar <voz> "texto"`), nunca por import de módulo, e o caminho vem da
-configuração — nunca embutido no código. Mudança que exigiria alterar o
-`voice-clone` é uma conversa separada, não um patch de lado.
+O [`voice-clone`](https://github.com/dougmotshell/voice-clone) é o motor de
+fala, tratado como **dependência externa somente leitura**. O instalador dele o
+põe em `~/.local/share/voice-clone` (com atalho `voice-clone` em `~/.local/bin`),
+mas também pode ser um clone do repositório. A integração é pelo contrato de CLI
+dele (`falar.py falar <voz> "texto"`, o mesmo que o atalho `voice-clone falar`
+executa), nunca por import de módulo, e o caminho vem da configuração
+(`[voice_clone] raiz` ou `CVB_VOICE_CLONE`) — nunca embutido no código. Mudança
+que exigiria alterar o `voice-clone` é uma conversa separada, não um patch de
+lado.
 
 ## Convenções
 
